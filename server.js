@@ -33,5 +33,7 @@ app.set("view engine","ejs")
 app.use(cookieParser())
 
 app.use("/gestion", routeurGestion)
+// /administrateur
+// /
 
 app.listen(port, () => console.log("Serveur démarré => port " + port));

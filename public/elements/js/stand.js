@@ -1,6 +1,6 @@
 // Sélection des éléments HTML
-const video = document.getElementById('videoElement');
-const boutonDemarrer = document.getElementById('boutonDemarrer');
+var video = document.getElementById('videoElement');
+var boutonDemarrer = document.getElementById('boutonDemarrer');
 
 // Fonction pour démarrer la lecture vidéo depuis la caméra
 async function demarrerVideo() {
