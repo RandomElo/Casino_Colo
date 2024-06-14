@@ -1,0 +1,15 @@
+#videoElement {
+    width: 300px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+#boutonDemarrer {
+    display: flex;
+    margin: 10px auto 0px auto;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+}

@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Stand</title>
+    <link rel="stylesheet" href="/public/css/stand.css">
+    <title>QR Code Reader</title>
 </head>
 <body>
-    <h1>Bienvenue sur la page de stand</h1>
+    <h1>Lecteur de QR-Code</h1>
+    <video id="videoElement" autoplay></video>
+    <button id="boutonDemarrer">Scan</button>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="/public/js/stand.js"></script>
 </body>
 </html>
