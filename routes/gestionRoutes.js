@@ -1,5 +1,5 @@
 import express from "express";
-import { pageStand } from "../controleurs/gestionControlleurs.js";
+import { modifierSolde } from "../controleurs/gestionControleurs.js";
 const routeurGestion = express.Router();
-routeurGestion.get("/stand", pageStand);
+routeurGestion.post("/modifier-solde", modifierSolde);
 export default routeurGestion;

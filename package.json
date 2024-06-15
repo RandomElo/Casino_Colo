@@ -18,9 +18,8 @@
         "ejs": "^3.1.10",
         "express": "^4.19.2",
         "jsonwebtoken": "^9.0.2",
-        "jsqr": "^1.4.0",
         "path": "^0.12.7",
-        "qr-image": "^3.2.0",
-        "sequelize": "^6.37.3"
+        "sequelize": "^6.37.3",
+        "sqlite3": "^5.1.7"
     }
 }
