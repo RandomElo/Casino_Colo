@@ -1,10 +1,18 @@
 export const recupererSolde = (req, res) => {
     req.Utilisateur.findOne({
         where: { id_utilisateur: req.body.idUtilisateur },
-    }).then((utilisateur) => {
-        // console.log(utilisateur.solde_utilisateur);
-        res.json({ solde: utilisateur.solde_utilisateur });
-    });
+    })
+        .then((utilisateur) => {
+            if (utilisateur != null) {
+                res.json({ trouve: true, nom: utilisateur.identite_utilisateur, solde: utilisateur.solde_utilisateur });
+            } else {
+                res.json({ trouve: false, msgErreur: "inexistant" });
+            }
+        })
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ trouve: false, msgErreur: erreur });
+        });
 };
 export const modifierSolde = (req, res) => {
     // const solde_utilisateur = req.body.solde_utilisateur;

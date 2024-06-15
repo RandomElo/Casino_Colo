@@ -1,6 +1,6 @@
 // Sélection des éléments HTML
 var video = document.getElementById("videoElement");
-var boutonDemarrer = document.getElementById("boutonDemarrer");
+//var boutonDemarrer = document.getElementById("boutonDemarrer");
 
 // Fonction pour démarrer la lecture vidéo depuis la caméra
 async function demarrerVideo() {
@@ -14,12 +14,12 @@ async function demarrerVideo() {
 }
 
 // Démarrer la lecture vidéo lorsque le bouton est cliqué
-boutonDemarrer.addEventListener("click", () => {
-    demarrerVideo();
-});
+//boutonDemarrer.addEventListener("click", () => {
+//    demarrerVideo();
+//});
 
 // Détecter les QR codes en utilisant la bibliothèque instascan (exemple)
-const scanner = new Instascan.Scanner({ video: video });
+var scanner = new Instascan.Scanner({ video: video });
 
 // Lorsqu'un QR code est détecté, faire quelque chose avec le résultat
 scanner.addListener("scan", async function (contenu) {
@@ -36,6 +36,17 @@ scanner.addListener("scan", async function (contenu) {
     });
     if (requete.ok) {
         const reponse = await requete.json();
+        if(reponse.trouve) {
+            document.querySelector("#divResultat").innerHTML = /*html*/`
+                <div></div>
+            `
+        } else {
+            if(reponse.msgErreur == "inexistant") {
+                console.error("Utilisateur inexistant")
+            } else {
+                console.error(reponse.msgErreur)
+            }
+        }
         console.log(reponse);
     } else {
         console.error("Une erreur est survenue");
