@@ -29,7 +29,7 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
     if (requete.ok) {
         const reponse = await requete.json();
         if (reponse.length == 0) {
-            document.querySelector("#divResultat").innerHTML = /*html*/ `<p class="text-danger">Aucun utilisateur est enregistrer</p>`;
+            document.querySelector("#divResultat").innerHTML = /*html*/ `<p class="text-danger text-center fw-bold">Aucun utilisateur est enregistrer</p>`;
         } else {
             let divResultat = "";
             for (let i = 0; i < reponse.length; i++) {
@@ -38,6 +38,7 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
                     <p><span class="gras">Nom: </span>${element.identite_utilisateur}</p>
                     <p><span class="gras">Solde: </span>${element.solde_utilisateur}</p>
                     <a class="modifierSolde bouton" data-id_utilisateur="${element.id_utilisateur}" data-solde="${element.solde_utilisateur}">Modifier le solde</a>
+                    <a class="bouton supprimerUtilisateur" data-id="${element.id_utilisateur}">Supprimer</a>
                 </div>`;
                 divResultat += div;
             }
@@ -65,6 +66,32 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
                         console.log(reponse);
                     } else {
                         console.error("Une erreur est survenue lors de l'envoie de la requete");
+                    }
+                });
+            });
+            document.querySelectorAll(".supprimerUtilisateur").forEach((bouton) => {
+                bouton.addEventListener("click", async (e) => {
+                    if (confirm("Tu est sur ?")) {
+                        const donnee = {
+                            idUtilisateur: e.target.dataset.id,
+                        };
+                        const requete = await fetch("/administrateur/suppression-utilisateur", {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(donnee),
+                        });
+                        if (requete.ok) {
+                            const reponse = await requete.json();
+                            if (reponse.suppression) {
+                                console.log("L'utilisteur à bien étais supprimer");
+                            } else {
+                                console.error(reponse.msgErreur);
+                            }
+                        } else {
+                            console.error("Une erreur est survenue lors de la requête");
+                        }
                     }
                 });
             });
@@ -105,7 +132,7 @@ document.querySelector("#boutonGestionGestionnaire").addEventListener("click", a
     if (requete.ok) {
         const reponse = await requete.json();
         if (reponse.length == 0) {
-            document.querySelector("#divResultat").innerHTML = /*html*/ `<p class="text-danger">Aucun gestionnaire est enregistrer</p>`;
+            document.querySelector("#divResultat").innerHTML = /*html*/ `<p class="text-danger text-center fw-bold">Aucun gestionnaire est enregistrer</p>`;
         } else {
             let divResultat = "";
             for (let i = 0; i < reponse.length; i++) {
@@ -113,10 +140,39 @@ document.querySelector("#boutonGestionGestionnaire").addEventListener("click", a
                 const div = /*html*/ `<div class="divEnfant">
                     <p><span class="gras">Prénom: </span>${element.prenom_gestionnaire}</p>
                     <p><span class="gras">Mdp: </span>${element.mdp_gestionnaire}</p>
+                    <a class="bouton supprimerGestionnaire" data-id="${element.id_gestionnaire}">Supprimer</a>
                 </div>`;
                 divResultat += div;
             }
             document.querySelector("#divResultat").innerHTML = divResultat;
+
+            document.querySelectorAll(".supprimerGestionnaire").forEach((bouton) => {
+                bouton.addEventListener("click", async (e) => {
+                    if (confirm("Tu est sur ?")) {
+                        const donnee = {
+                            idGestionnaire: e.target.dataset.id,
+                        };
+                        const requete = await fetch("/administrateur/suppression-gestionnaire", {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(donnee),
+                        });
+                        if (requete.ok) {
+                            const reponse = await requete.json();
+                            console.log(reponse);
+                            if (reponse.suppression) {
+                                console.log("Le gestionnaire à bien étais supprrimer");
+                            } else {
+                                console.error(reponse.msgErreur);
+                            }
+                        } else {
+                            console.error("une erreur est survenue lors de l'envoi de la requête");
+                        }
+                    }
+                });
+            });
         }
     } else {
         console.error("Une erreur est survenue lors de la requête ");

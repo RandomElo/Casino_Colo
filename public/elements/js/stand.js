@@ -24,18 +24,21 @@ const scanner = new Instascan.Scanner({ video: video });
 // Lorsqu'un QR code est détecté, faire quelque chose avec le résultat
 scanner.addListener("scan", async function (contenu) {
     console.log("QR Code détecté : " + contenu);
-    const requete = await fetch("/gestion/solde", {
+    const donnee = {
+        idUtilisateur: contenu,
+    };
+    const requete = await fetch("/gestion/recuperer-solde", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(contenu),
+        body: JSON.stringify(donnee),
     });
     if (requete.ok) {
         const reponse = await requete.json();
         console.log(reponse);
     } else {
-        console.log("Une erreur est survenue");
+        console.error("Une erreur est survenue");
     }
 });
 

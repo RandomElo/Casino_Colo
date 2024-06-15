@@ -35,3 +35,9 @@
     align-items: center;
     margin-bottom: 10px;
 }
+.supprimerGestionnaire {
+    background-color: #cb3737;
+}
+.supprimerUtilisateur {
+    background-color: #cb3737;
+}

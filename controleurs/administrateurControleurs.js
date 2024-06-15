@@ -31,3 +31,19 @@ export const listeGestionnaire = async (req, res) => {
     const listeGestionnaire = await req.Gestionnaire.findAll();
     res.json(listeGestionnaire);
 };
+export const suppressionGestionnaire = async (req, res) => {
+    req.Gestionnaire.destroy({ where: { id_gestionnaire: req.body.idGestionnaire } })
+        .then(() => res.json({ suppression: true }))
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ suppression: false, msgErreur: erreur });
+        });
+};
+export const suppressionUtilisateur = async (req, res) => {
+    req.Utilisateur.destroy({ where: { id_utilisateur: req.body.idUtilisateur } })
+        .then(() => res.json({ suppression: true }))
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ suppression: false, msgErreur: erreur });
+        });
+}
