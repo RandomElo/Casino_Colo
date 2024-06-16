@@ -1,6 +1,5 @@
 // Sélection des éléments HTML
 var video = document.getElementById("videoElement");
-//var boutonDemarrer = document.getElementById("boutonDemarrer");
 
 // Fonction pour démarrer la lecture vidéo depuis la caméra
 async function demarrerVideo() {
@@ -13,16 +12,17 @@ async function demarrerVideo() {
     }
 }
 
-// Démarrer la lecture vidéo lorsque le bouton est cliqué
-//boutonDemarrer.addEventListener("click", () => {
-//    demarrerVideo();
-//});
+// Démarrer la vidéo lors du chargement de la page
+demarrerVideo();
 
-// Détecter les QR codes en utilisant la bibliothèque instascan (exemple)
+// Détecter les QR codes en utilisant la bibliothèque Instascan
 var scanner = new Instascan.Scanner({ video: video });
+var qrCodeDetected = false;
 
-// Lorsqu'un QR code est détecté, faire quelque chose avec le résultat
-scanner.addListener("scan", async function (contenu) {
+async function gestionScan(contenu) {
+    if (qrCodeDetected) return;
+    qrCodeDetected = true;
+
     console.log("QR Code détecté : " + contenu);
     const donnee = {
         idUtilisateur: contenu,
@@ -36,22 +36,58 @@ scanner.addListener("scan", async function (contenu) {
     });
     if (requete.ok) {
         const reponse = await requete.json();
-        if(reponse.trouve) {
-            document.querySelector("#divResultat").innerHTML = /*html*/`
-                <div></div>
-            `
+        console.log(reponse);
+        if (reponse.trouve) {
+            document.querySelector("#divResultat").innerHTML = /*html*/ `<div>
+                <p><span class="gras">Nom : </span>${reponse.nom}</p>
+                <div><p class="gras"><span>Mise : </p><input type="number" value=0 max="${reponse.solde}" id="inputMise"></div>
+                <div id="divBoutonMise">
+                    <a id="ajoutMise1" class="boutonMise">+ 1</a>
+                    <a id="ajoutMise10" class="boutonMise">+ 10</a>
+                    <a id="ajoutMise100" class="boutonMise">+ 100</a>
+                </div>
+                <a id="validerLaMise">Valider</a>
+            </div>`;
+            let mise = document.querySelector("#inputMise").value;
+            console.log(mise);
+            document.querySelector("#ajoutMise1").addEventListener("click", () => {
+                if (mise + 1 <= reponse.solde) {
+                    console.log("Vous pouvez miser cette somme");
+                    document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value)+1
+                } else {
+                    alert("Le solde du compte est pas assez élever");
+                }
+            });
+            document.querySelector("#ajoutMise10").addEventListener("click", () => {
+                if (mise + 10 <= reponse.solde) {
+                    console.log("Vous pouvez miser cette somme");
+                    document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value)+10
+                } else {
+                    alert("Le solde du compte est pas assez élever");
+                }
+            });
+            document.querySelector("#ajoutMise100").addEventListener("click", () => {
+                if (mise + 100 <= reponse.solde) {
+                    console.log("Vous pouvez miser cette somme");
+                    document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value)+100
+                } else {
+                    alert("Le solde du compte est pas assez élever");
+                }
+            });
         } else {
-            if(reponse.msgErreur == "inexistant") {
-                console.error("Utilisateur inexistant")
+            if (reponse.msgErreur == "inexistant") {
+                console.error("Utilisateur inexistant");
             } else {
-                console.error(reponse.msgErreur)
+                console.error(reponse.msgErreur);
             }
         }
-        console.log(reponse);
     } else {
         console.error("Une erreur est survenue");
     }
-});
+}
+
+// Ajouter un écouteur pour le scan des QR codes
+scanner.addListener("scan", gestionScan);
 
 // Démarrer la détection des QR codes
 Instascan.Camera.getCameras()

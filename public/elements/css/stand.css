@@ -12,3 +12,23 @@
     font-size: 18px;
     font-weight: bold;
 }
+#divResultat {
+    text-align: center;
+}
+#divBoutonMise {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.boutonMise {
+    padding: 10px;
+    color: white;
+    background-color: #688bfb;
+    text-decoration: none;
+}
+.boutonMise:hover {
+    color: white;
+}
+#ajoutMise1,#ajoutMise10 {
+    margin-right: 10px;
+}
