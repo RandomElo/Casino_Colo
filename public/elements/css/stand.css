@@ -1,5 +1,6 @@
 #videoElement {
     width: 300px;
+    margin-bottom: 15px;
 }
 #boutonDemarrer {
     display: flex;
@@ -48,4 +49,10 @@
 #divInputMise p  {
     margin: 0;
     margin-right: 10px;
+}
+#boutonResultat {
+    background-color: #688bfb;
+    color: white;
+    padding: 10px;
+    margin: 0 auto;
 }

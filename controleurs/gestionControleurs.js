@@ -133,3 +133,11 @@ export const miseUtilisateur = (req, res) => {
             res.json({ mise: false, msgErreur: erreur, lieu: "Recherche utilisateur" });
         });
 };
+export const recuperationPartie = async (req, res ) => {
+    if(req.cookies.gestionnaire!= null ) {
+        const utilisateurPartie = await req.UtilisateurPartie.findAll({where:{id_partie:req.cookies.partie}})
+        res.json({recuperer:true, resultat:utilisateurPartie})
+    } else {
+        res.json({recuperer:false, msgErreur:"recharger"})
+    }
+}

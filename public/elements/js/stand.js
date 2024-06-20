@@ -3,18 +3,17 @@ var video = document.getElementById("videoElement");
 
 // Fonction pour démarrer la lecture vidéo depuis la caméra
 
-// async function demarrerVideo() {
-//     try {
-//         const flux = await navigator.mediaDevices.getUserMedia({ video: true });
-//         video.srcObject = flux;
-//         video.play();
-//     } catch (erreur) {
-//         console.error("Erreur lors de l'accès à la caméra :", erreur);
-//     }
-// }
-
+async function demarrerVideo() {
+    try {
+        const flux = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = flux;
+        video.play();
+    } catch (erreur) {
+        console.error("Erreur lors de l'accès à la caméra :", erreur);
+    }
+}
 // Démarrer la vidéo lors du chargement de la page
-// demarrerVideo();
+demarrerVideo();
 
 // Détecter les QR codes en utilisant la bibliothèque Instascan
 var scanner = new Instascan.Scanner({ video: video });
@@ -102,22 +101,48 @@ async function gestionScan(contenu) {
     }
 }
 
-// Ajouter un écouteur pour le scan des QR codes
 
-// scanner.addListener("scan", gestionScan);
 
-gestionScan(3);
+scanner.addListener("scan", gestionScan);// Ajouter un écouteur pour le scan des QR codes
+//gestionScan(3);
 
 // Démarrer la détection des QR codes
 
-// Instascan.Camera.getCameras()
-//     .then(function (cameras) {
-//         if (cameras.length > 0) {
-//             scanner.start(cameras[0]);
-//         } else {
-//             console.error("Aucune caméra trouvée.");
-//         }
-//     })
-//     .catch(function (erreur) {
-//         console.error("Erreur lors de l'accès aux caméras :", erreur);
-//     });
+Instascan.Camera.getCameras()
+    .then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+        } else {
+            console.error("Aucune caméra trouvée.");
+        }
+    })
+    .catch(function (erreur) {
+        console.error("Erreur lors de l'accès aux caméras :", erreur);
+    });
+document.querySelector("#boutonResultat").addEventListener("click", async ()=>{
+    const requete = await fetch("/gestion/recuperation-partie",{
+        methode:"GET"
+    })
+    if(requete.ok) {
+        const reponse = await requete.json()
+        console.log(reponse)
+        if(reponse.recuperer) {
+            let divResultat = ""
+            for(let i  = 0; i < reponse.resultat.length; i++) {
+                let element = reponse.resultat[i]
+                divResultat+= /*html*/`<div class="divUtilisateurPartie">
+                
+                </div>`
+            }
+        } else {
+            if(reponse.msgErreur == "recharger") {
+                location.reload(true)
+            } else {
+                console.error(msgErreur)
+            }
+
+        }
+    } else {
+        console.error("Une erreur est survenue lors de la requête")
+    }
+})
