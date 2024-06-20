@@ -1,0 +1,41 @@
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 317px;
+}
+
+label {
+    display: inline-block;
+    width: 110px;
+    text-align: right;
+    margin: 10px;
+}
+
+input {
+    height: 22px;
+    text-align: left;
+    padding: 1px;
+}
+#divErreur > #pseudoUtiliser {
+    color: rgb(112, 186, 0);
+    text-align: center;
+}
+.divForm {
+    position: relative; /* Crée un contexte de positionnement pour les enfants positionnés absolument */
+    display: flex; /* Utilise un layout en flexbox pour aligner les enfants horizontalement */
+    align-items: center; /* Centre verticalement les enfants par rapport à la ligne principale */
+}
+#boutonEnvoi {
+    width: 100px;
+    margin: 10px auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}

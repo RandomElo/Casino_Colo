@@ -19,16 +19,33 @@
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    margin-bottom: 20px;
 }
 .boutonMise {
     padding: 10px;
     color: white;
     background-color: #688bfb;
     text-decoration: none;
+    cursor: pointer;
 }
 .boutonMise:hover {
     color: white;
 }
-#ajoutMise1,#ajoutMise10 {
+#ajoutMise1,#ajoutMise10,#ajoutMise100 {
+    margin-right: 10px;
+}
+#validerLaMise {
+    padding: 10px;
+    color: white;
+    background-color: #7cff00;
+    cursor: pointer;
+}
+#divInputMise{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#divInputMise p  {
+    margin: 0;
     margin-right: 10px;
 }

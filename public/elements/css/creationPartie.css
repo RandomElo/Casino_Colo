@@ -1,0 +1,13 @@
+.bouton {
+    width: 150px;
+    margin: 10px auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}

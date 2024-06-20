@@ -1,0 +1,15 @@
+<%- include('./parties/tete.ejs') %>
+    <h1 class="titrePage">Connexion</h1>
+    <form id="form" class="mx-auto">
+        <div class="divForm">
+            <label for="nomForm">Nom :</label>
+            <input id="nomForm" name="nom_utilisateur" type="text" required />
+        </div>
+        <div class="mb-2 divForm">
+            <label for="mdpForm">Mot de passe :</label>
+            <input id="mdpForm" name="mdp_utilisateur" type="password" required />
+        </div>
+        <div id="divErreur"></div>
+        <button type="submit" id="boutonEnvoi">Connexion</button>
+    </form>
+<%- include('./parties/pied.ejs') %>
