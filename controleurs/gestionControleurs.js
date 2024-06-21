@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 export const recupererSolde = (req, res) => {
     req.Utilisateur.findOne({
         where: { id_utilisateur: req.body.idUtilisateur },
@@ -133,11 +132,22 @@ export const miseUtilisateur = (req, res) => {
             res.json({ mise: false, msgErreur: erreur, lieu: "Recherche utilisateur" });
         });
 };
-export const recuperationPartie = async (req, res ) => {
-    if(req.cookies.gestionnaire!= null ) {
-        const utilisateurPartie = await req.UtilisateurPartie.findAll({where:{id_partie:req.cookies.partie}})
-        res.json({recuperer:true, resultat:utilisateurPartie})
+export const recuperationPartie = async (req, res) => {
+    if (req.cookies.gestionnaire != null) {
+        const utilisateurPartie = await req.UtilisateurPartie.findAll({ where: { id_partie: req.cookies.partie } });
+        let donnees = {};
+        for (let i = 0; i < utilisateurPartie.length; i++) {
+            // let element = utilisateurPartie[i];
+            const element = await req.Utilisateur.findOne({ where: { id_utilisateur: utilisateurPartie[i].id_utilisateur } });
+            donnees[i] = {
+                id_utilisateur: utilisateurPartie[i].id_utilisateur,
+                nom_utilisateur: element.identite_utilisateur,
+                mise_utilisateur: utilisateurPartie[i].mise,
+            };
+        }
+        donnees.length = utilisateurPartie.length;
+        res.json({ recuperer: true, donnees });
     } else {
-        res.json({recuperer:false, msgErreur:"recharger"})
+        res.json({ recuperer: false, msgErreur: "recharger" });
     }
-}
+};

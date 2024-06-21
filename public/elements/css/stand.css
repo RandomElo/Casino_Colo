@@ -32,7 +32,9 @@
 .boutonMise:hover {
     color: white;
 }
-#ajoutMise1,#ajoutMise10,#ajoutMise100 {
+#ajoutMise1,
+#ajoutMise10,
+#ajoutMise100 {
     margin-right: 10px;
 }
 #validerLaMise {
@@ -41,12 +43,12 @@
     background-color: #7cff00;
     cursor: pointer;
 }
-#divInputMise{
+#divInputMise {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-#divInputMise p  {
+#divInputMise p {
     margin: 0;
     margin-right: 10px;
 }
@@ -55,4 +57,29 @@
     color: white;
     padding: 10px;
     margin: 0 auto;
+    cursor: pointer;
+}
+
+.divMutltiplicateurGagner {
+    margin-bottom: 30px;
+}
+.boutonMultiplicateur {
+    color: black;
+    background-color: #dfff00;
+    padding: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+.miseX2,
+.miseX5 {
+    margin-right: 10px;
+}
+.boutonPartiePerdu {
+    color: black;
+    background-color: #ffbf00;
+    padding: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
 }

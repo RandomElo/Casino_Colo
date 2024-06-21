@@ -101,9 +101,7 @@ async function gestionScan(contenu) {
     }
 }
 
-
-
-scanner.addListener("scan", gestionScan);// Ajouter un écouteur pour le scan des QR codes
+scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan des QR codes
 //gestionScan(3);
 
 // Démarrer la détection des QR codes
@@ -119,30 +117,39 @@ Instascan.Camera.getCameras()
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
-document.querySelector("#boutonResultat").addEventListener("click", async ()=>{
-    const requete = await fetch("/gestion/recuperation-partie",{
-        methode:"GET"
-    })
-    if(requete.ok) {
-        const reponse = await requete.json()
-        console.log(reponse)
-        if(reponse.recuperer) {
-            let divResultat = ""
-            for(let i  = 0; i < reponse.resultat.length; i++) {
-                let element = reponse.resultat[i]
-                divResultat+= /*html*/`<div class="divUtilisateurPartie">
-                
-                </div>`
+document.querySelector("#boutonResultat").addEventListener("click", async () => {
+    const requete = await fetch("/gestion/recuperation-partie", {
+        methode: "GET",
+    });
+    if (requete.ok) {
+        const reponse = await requete.json();
+        console.clear();
+        console.log(reponse);
+        if (reponse.recuperer) {
+            const donnees = reponse.donnees;
+            let divResultat = "";
+            for (let i = 0; i < donnees.length; i++) {
+                let element = donnees[i];
+                divResultat += /*html*/ `<div class="divUtilisateurPartie">
+                    <p><span class="gras">Nom : </span>${element.nom_utilisateur}</p>
+                    <div class="divMutltiplicateurGagner">
+                        <a class="boutonMultiplicateur miseX2">x 2</a>
+                        <a class="boutonMultiplicateur miseX5">x 5</a>
+                        <a class="boutonMultiplicateur miseX10">x 10</a>
+                    </div>
+                    <a class="boutonPartie"></a>
+                    <a class="boutonPartiePerdu">Perdu</a>
+                </div>`;
             }
+            document.querySelector("#divResultat").innerHTML = divResultat;
         } else {
-            if(reponse.msgErreur == "recharger") {
-                location.reload(true)
+            if (reponse.msgErreur == "recharger") {
+                location.reload(true);
             } else {
-                console.error(msgErreur)
+                console.error(msgErreur);
             }
-
         }
     } else {
-        console.error("Une erreur est survenue lors de la requête")
+        console.error("Une erreur est survenue lors de la requête");
     }
-})
+});
