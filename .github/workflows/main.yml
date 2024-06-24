@@ -34,3 +34,4 @@ jobs:
                   password: ${{secrets.PSEUDO_SSH}}
                   port: 22
                   script: npm install;
+                  
