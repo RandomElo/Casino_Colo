@@ -151,3 +151,66 @@ export const recuperationPartie = async (req, res) => {
         res.json({ recuperer: false, msgErreur: "recharger" });
     }
 };
+
+export const ajoutGain = async (req, res) => {
+    req.UtilisateurPartie.findByPk({ where: { id_utilisateur: req.body.idUtilisateur } })
+        .then((utilisateur) => {
+            if (utilisateur != null) {
+                req.Utilisateur.update({ solde_utilisateur: utilisateur.solde_utilisateur * req.body.gainMultiplicateur }, { where: { id_utilisateur: req.body.idUtilisateur } })
+                    .then(() => res.json({ ajout: true }))
+                    .catch((erreur) => {
+                        console.error(erreur);
+                        res.json({ ajout: false, msgErreur: erreur });
+                    });
+            } else {
+                res.json({ ajout: false, msgErreur: "Utilisateur Inexistant" });
+            }
+        })
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ ajout: false, msgErreur: erreur });
+        });
+};
+export const gainPerdu = (req, res) => {
+    req.UtilisateurPartie.findOne({ where: { id_utilisateur: req.body.idUtilisateur } })
+        .then((utilisateurPartie) => {
+            if (utilisateurPartie != null) {
+                req.Utilisateur.findOne({ where: { id_utilisateur: req.body.idUtilisateur } })
+                    .then((utilisateur) => {
+                        const soldeUtilisateur = utilisateur.solde_utilisateur;
+                        req.Utilisateur.update({ solde_utilisateur: utilisateur.solde_utilisateur - utilisateurPartie.mise }, { where: { id_utilisateur: req.body.idUtilisateur } })
+                            .then(() => res.json({ maj: true }))
+                            .catch((erreur) => {
+                                console.error(erreur);
+                                res.json({ maj: false, msgErreur: erreur, lieu: "Mise à jour" });
+                            });
+                    })
+                    .catch((erreur) => {
+                        console.error(erreur);
+                        res.json({ maj: false, msgErreur: erreur, lieu: "Récupération BDD Utilisateur" });
+                    });
+            } else {
+                res.json({ maj: false, msgErreur: "Utilisateur inexistant", lieu: "Récupération BDD UtilisateurPartie" });
+            }
+        })
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ maj: false, msgErreur: erreur });
+        });
+};
+export const finPartie = (req, res) => {
+    req.Partie.destroy({ where: { id_partie: req.cookies.partie } })
+        .then(async () => {
+            const utilisateurPartie = await req.UtilisateurPartie.findAll({ where: { id_partie: req.cookies.partie } });
+            for (let i = 0; i < utilisateurPartie.length; i++) {
+                const element = utilisateurPartie[i];
+                await req.UtilisateurPartie.destroy({ where: { id_utilisateur: element.id_utilisateur } });
+            }
+            res.clearCookie("partie");
+            res.json({ supprimer: true });
+        })
+        .catch((erreur) => {
+            console.error(erreur);
+            res.json({ supprimer: false, msgErreur: erreur });
+        });
+};

@@ -1,4 +1,4 @@
-document.querySelector("#boutonCreationUtilisateur").addEventListener("click", async () => {
+async function creationUtilisateur() {
     const donnee = {
         identite: prompt("Quel est le nom ?"),
     };
@@ -21,8 +21,8 @@ document.querySelector("#boutonCreationUtilisateur").addEventListener("click", a
             console.log("Une erreur est survenue lors de l'envoi de la requête");
         }
     }
-});
-document.querySelector("#boutonGestionUtilisateur").addEventListener("click", async () => {
+}
+async function gestionUtilisateur() {
     const requete = await fetch("/administrateur/liste-utilisateur", {
         method: "GET",
     });
@@ -60,6 +60,7 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
                         const reponse = await requete.json();
                         if (reponse.miseAJour) {
                             console.log("La mise à jour à étais effectuer avec succés");
+                            gestionUtilisateur();
                         } else {
                             console.error(reponse.msgErreur);
                         }
@@ -86,6 +87,7 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
                             const reponse = await requete.json();
                             if (reponse.suppression) {
                                 console.log("L'utilisteur à bien étais supprimer");
+                                gestionUtilisateur();
                             } else {
                                 console.error(reponse.msgErreur);
                             }
@@ -99,8 +101,8 @@ document.querySelector("#boutonGestionUtilisateur").addEventListener("click", as
     } else {
         console.error("Une erreur est survenue lors de la requête");
     }
-});
-document.querySelector("#boutonCreationGestionnaire").addEventListener("click", async () => {
+}
+async function creationGestionnaire() {
     const donnees = {
         prenom: prompt("Quel est le prénom ?"),
         mdp: prompt("Quel est le mdp ?"),
@@ -124,8 +126,8 @@ document.querySelector("#boutonCreationGestionnaire").addEventListener("click", 
             console.error("Une erreur esr survenue lors de l'envoi de la requête");
         }
     }
-});
-document.querySelector("#boutonGestionGestionnaire").addEventListener("click", async () => {
+}
+async function gestionGestionnaire() {
     const requete = await fetch("/administrateur/liste-gestionnaire", {
         method: "GET",
     });
@@ -177,4 +179,8 @@ document.querySelector("#boutonGestionGestionnaire").addEventListener("click", a
     } else {
         console.error("Une erreur est survenue lors de la requête ");
     }
-});
+}
+document.querySelector("#boutonCreationUtilisateur").addEventListener("click", creationUtilisateur);
+document.querySelector("#boutonGestionUtilisateur").addEventListener("click", gestionUtilisateur);
+document.querySelector("#boutonCreationGestionnaire").addEventListener("click", creationGestionnaire);
+document.querySelector("#boutonGestionGestionnaire").addEventListener("click", gestionGestionnaire);

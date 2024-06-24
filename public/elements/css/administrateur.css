@@ -1,0 +1,24 @@
+
+.boutonAction {
+    width: 190px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    background-color: #729ea1;
+}
+.modifierSolde {
+    background-color: #ffa744;
+}
+#boutonGestionUtilisateur {
+    margin-bottom: 20px;
+}
+.divEnfant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.supprimerGestionnaire,
+.supprimerUtilisateur {
+    background-color: #db5375;
+}

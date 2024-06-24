@@ -1,13 +1,7 @@
-.bouton {
-    width: 150px;
-    margin: 10px auto;
-    padding: 10px;
+#boutonCreationPartie {
+    width: 129px;
     display: flex;
-    justify-content: center;
-    background-color: black;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #729ea1;
 }

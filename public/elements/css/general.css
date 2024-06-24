@@ -1,3 +1,14 @@
+.bouton {
+    margin-bottom: 10px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+.bouton:hover {
+    color: white;
+}
 .titrePage {
     text-align: center;
     margin-top: 15px;

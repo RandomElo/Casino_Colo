@@ -2,17 +2,6 @@
     width: 300px;
     margin-bottom: 15px;
 }
-#boutonDemarrer {
-    display: flex;
-    margin: 10px auto 0px auto;
-    padding: 10px;
-    background-color: black;
-    color: white;
-    border: 1px solid black;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-}
 #divResultat {
     text-align: center;
 }
@@ -23,14 +12,7 @@
     margin-bottom: 20px;
 }
 .boutonMise {
-    padding: 10px;
-    color: white;
-    background-color: #688bfb;
-    text-decoration: none;
-    cursor: pointer;
-}
-.boutonMise:hover {
-    color: white;
+    background-color: #ffa744;
 }
 #ajoutMise1,
 #ajoutMise10,
@@ -38,10 +20,7 @@
     margin-right: 10px;
 }
 #validerLaMise {
-    padding: 10px;
-    color: white;
-    background-color: #7cff00;
-    cursor: pointer;
+    background-color: #729ea1;
 }
 #divInputMise {
     display: flex;
@@ -53,33 +32,25 @@
     margin-right: 10px;
 }
 #boutonResultat {
-    background-color: #688bfb;
-    color: white;
-    padding: 10px;
+    background-color: #729ea1;
     margin: 0 auto;
-    cursor: pointer;
 }
-
+.divUtilisateurPartie {
+    margin-bottom: 30px;
+}
 .divMutltiplicateurGagner {
     margin-bottom: 30px;
 }
 .boutonMultiplicateur {
-    color: black;
-    background-color: #dfff00;
-    padding: 10px;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
+    background-color: #729ea1;
 }
 .miseX2,
 .miseX5 {
     margin-right: 10px;
 }
 .boutonPartiePerdu {
-    color: black;
-    background-color: #ffbf00;
-    padding: 10px;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
+    background-color: #ffa744;
+}
+#boutonPartieTerminee {
+    background-color: #db5375;
 }

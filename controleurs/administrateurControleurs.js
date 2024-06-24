@@ -1,5 +1,6 @@
-export const accueilAdmin = (req, res) => {
-    res.render("accueilAdmin.ejs", { titre: "Administrateur", css: "accueilAdmin", js: "accueilAdmin" });
+export const administration = (req, res) => {
+    // Si pas de cookie alors renvoyer la page de connexion
+    res.render("administrateur.ejs", { titre: "Administrateur", css: "administrateur", js: "administrateur" });
 };
 export const ajoutUtilisateur = (req, res) => {
     req.Utilisateur.create({
@@ -46,4 +47,4 @@ export const suppressionUtilisateur = async (req, res) => {
             console.error(erreur);
             res.json({ suppression: false, msgErreur: erreur });
         });
-}
+};

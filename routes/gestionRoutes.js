@@ -1,10 +1,13 @@
 import express from "express";
-import { modifierSolde, recupererSolde, connexionGestionnaire, creationPartie, miseUtilisateur, recuperationPartie } from "../controleurs/gestionControleurs.js";
+import { modifierSolde, recupererSolde, connexionGestionnaire, creationPartie, miseUtilisateur, recuperationPartie, ajoutGain, gainPerdu, finPartie } from "../controleurs/gestionControleurs.js";
 const routeurGestion = express.Router();
 routeurGestion.post("/modifier-solde", modifierSolde);
 routeurGestion.post("/recuperer-solde", recupererSolde);
 routeurGestion.post("/connexion", connexionGestionnaire);
 routeurGestion.get("/cree-partie", creationPartie);
 routeurGestion.post("/mise", miseUtilisateur);
-routeurGestion.get("/recuperation-partie", recuperationPartie)
+routeurGestion.get("/recuperation-partie", recuperationPartie);
+routeurGestion.post("/ajout-gain", ajoutGain);
+routeurGestion.post("/gain-perdu", gainPerdu);
+routeurGestion.delete("/fin-partie", finPartie);
 export default routeurGestion;
