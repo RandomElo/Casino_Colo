@@ -31,7 +31,6 @@ jobs:
               with:
                   host: ${{secrets.SERVEUR_SSH}}
                   username: ${{secrets.PSEUDO_SSH}}
-                  password: ${{secrets.PSEUDO_SSH}}
+                  password: ${{secrets.MDP_SSH}}
                   port: 22
                   script: npm install;
-                  
