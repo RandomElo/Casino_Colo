@@ -33,4 +33,4 @@ jobs:
                   username: ${{secrets.PSEUDO_SSH}}
                   password: ${{secrets.MDP_SSH}}
                   port: 22
-                  script: npm init;
+                  script: npm install;
