@@ -1,8 +1,9 @@
 on: push
 name: 🚀 Publication
+
 jobs:
     publish:
-        name: 🎉 Déploiment sur GitHub
+        name: 🎉 Déploiement sur GitHub
         runs-on: ubuntu-latest
         steps:
             - name: 🚚 Obtention du dernier code
@@ -26,6 +27,7 @@ jobs:
               uses: actions/setup-node@v2
               with:
                   node-version: 18
+
             - name: 📂 Accès en SSH au serveur et exécution de npm install
               uses: appleboy/ssh-action@v1.0.0
               with:
@@ -33,4 +35,5 @@ jobs:
                   username: ${{secrets.PSEUDO_SSH}}
                   password: ${{secrets.MDP_SSH}}
                   port: 22
-                  script: pwd; npm init; npm install;
+                  script: |
+                      npm install
