@@ -216,8 +216,8 @@ export const finPartie = (req, res) => {
 };
 export const cameraInforamtion = (req, res) => {
     console.log(req.body.donnees);
-    for(let i = 0; i < req.body.length; i++) {
-        console.log(req.body.donnees[i].name)
+    for (let i = 0; i < req.body.donnees.length; i++) {
+        console.log(req.body.donnees[i].name);
     }
     res.json({ traiter: "ok" });
 };
