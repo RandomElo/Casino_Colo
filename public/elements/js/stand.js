@@ -128,7 +128,7 @@ Instascan.Camera.getCameras()
         requeteCamera(cameras);
         if (cameras.length > 0) {
             if (cameras.length == 2) {
-                scanner.start(cameras[1]);
+                scanner.start(cameras[0]);
             } else if (cameras.length == 4) {
                 scanner.start(cameras[2]);
             } else {
