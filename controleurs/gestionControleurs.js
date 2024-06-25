@@ -153,7 +153,7 @@ export const recuperationPartie = async (req, res) => {
 };
 
 export const ajoutGain = async (req, res) => {
-    req.UtilisateurPartie.findByPk({ where: { id_utilisateur: req.body.idUtilisateur } })
+    req.UtilisateurPartie.findOne({ where: { id_utilisateur: req.body.idUtilisateur } })
         .then((utilisateur) => {
             if (utilisateur != null) {
                 req.Utilisateur.update({ solde_utilisateur: utilisateur.solde_utilisateur * req.body.gainMultiplicateur }, { where: { id_utilisateur: req.body.idUtilisateur } })
@@ -215,7 +215,7 @@ export const finPartie = (req, res) => {
         });
 };
 export const cameraInforamtion = (req, res) => {
-    console.log(req.body.donnees)
+    console.log(req.body.donnees);
     console.log("-------------------------------------");
     for (let i = 0; i < req.body.donnees.length; i++) {
         console.log(i);

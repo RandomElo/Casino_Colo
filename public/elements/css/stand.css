@@ -1,6 +1,7 @@
-/* #videoElement {
-    width: 300px;
-    margin-bottom: 15px;
+#videoElement {
+    width: 90%;
+    max-width: 500px;
+    height: 50%;
 }
 #divResultat {
     text-align: center;
@@ -34,6 +35,8 @@
 #boutonResultat {
     background-color: #729ea1;
     margin: 0 auto;
+    display: flex;
+    width: 93px;
 }
 .divUtilisateurPartie {
     margin-bottom: 30px;
@@ -54,7 +57,7 @@
 #boutonPartieTerminee {
     background-color: #db5375;
 }
- */
+
 #cameraSelect {
     display: block;
     margin-left: auto;

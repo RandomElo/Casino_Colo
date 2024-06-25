@@ -117,15 +117,16 @@ Instascan.Camera.getCameras()
         cameraSelect.addEventListener("change", () => {
             var selectedCameraId = cameraSelect.value;
             demarrerVideo(selectedCameraId);
-            scanner.start(selectedCameraId);
+            scanner.start(cameras.find((camera) => camera.id === selectedCameraId));
         });
 
-        // Démarrer avec la première caméra disponible
+        // Utiliser la deuxième caméra si deux caméras sont disponibles
         if (cameras.length > 1) {
             cameraSelect.value = cameras[1].id;
             demarrerVideo(cameras[1].id);
             scanner.start(cameras[1]);
         } else if (cameras.length > 0) {
+            // Sinon, utiliser la première caméra disponible
             cameraSelect.value = cameras[0].id;
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
@@ -134,3 +135,111 @@ Instascan.Camera.getCameras()
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
+document.querySelector("#boutonResultat").addEventListener("click", async () => {
+    const requete = await fetch("/gestion/recuperation-partie", {
+        methode: "GET",
+    });
+    if (requete.ok) {
+        const reponse = await requete.json();
+        console.clear();
+        if (reponse.recuperer) {
+            const donnees = reponse.donnees;
+            let divResultat = "";
+            for (let i = 0; i < donnees.length; i++) {
+                let element = donnees[i];
+                divResultat += /*html*/ `<div id="divUtilisateur${element.id_utilisateur}" class="divUtilisateurPartie">
+                        <p><span class="gras">Nom : </span>${element.nom_utilisateur}</p>
+                        <div class="divMutltiplicateurGagner" data-id_utilisateur=${element.id_utilisateur} >
+                            <a class="bouton boutonMultiplicateur miseX2">x 2</a>
+                            <a class="bouton boutonMultiplicateur miseX5">x 5</a>
+                            <a class="bouton boutonMultiplicateur miseX10">x 10</a>
+                        </div>
+                        <a class="bouton boutonPartiePerdu" data-id_utilisateur=${element.id_utilisateur}>Perdu</a>
+                    </div>`;
+            }
+            document.querySelector("#divResultat").innerHTML = divResultat + /*html*/ `<a id="boutonPartieTerminee" class="bouton">Partie terminée</a>`;
+            // Bouton qui permet de multiplier la mise
+            document.querySelectorAll(".boutonMultiplicateur").forEach((bouton) => {
+                bouton.addEventListener("click", async (e) => {
+                    //const gainMutiplicateur = Number(e.target.classList[1].split("X")[1]) * Number(e.target.parentNode.dataset.solde);
+                    const donnees = {
+                        idUtilisateur: e.target.parentNode.dataset.id_utilisateur,
+                        gainMultiplicateur: e.target.classList[2].split("X")[1],
+                    };
+                    console.log(donnees)
+                    const requete = await fetch("/gestion/ajout-gain", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(donnees),
+                    });
+                    if (requete.ok) {
+                        const reponse = await requete.json();
+                        if (reponse.ajout) {
+                            document.querySelector(`#divUtilisateur${e.target.parentNode.dataset.id_utilisateur}`).style.display = "none";
+                        } else {
+                            if (reponse.msgErreur == "Utilisateur Inexistant") {
+                                alert("L'utilisateur n'existe pas");
+                            } else {
+                                console.error(reponse.msgErreur);
+                            }
+                        }
+                    } else {
+                        console.error("Une erreur est survenue lors de la requête");
+                    }
+                });
+            });
+            // Bouton si jamais la mise est perdu
+            document.querySelectorAll(".boutonPartiePerdu").forEach((bouton) => {
+                bouton.addEventListener("click", async (e) => {
+                    const donnee = {
+                        idUtilisateur: e.target.dataset.id_utilisateur,
+                    };
+                    const requete = await fetch("/gestion/gain-perdu", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(donnee),
+                    });
+                    if (requete.ok) {
+                        const reponse = await requete.json();
+                        if (reponse.maj) {
+                            document.querySelector(`#divUtilisateur${e.target.dataset.id_utilisateur}`).style.display = "none";
+                        } else {
+                            if (reponse.msgErreur == "Utilisateur Inexistant") {
+                                alert("L'utilisateur n'existe pas");
+                            } else {
+                                console.log(reponse.msgErreur);
+                            }
+                        }
+                        console.log(reponse);
+                    } else {
+                        console.error("Une erreur est survenue lors de l'envoie de la requête");
+                    }
+                });
+            });
+            // Bouton qui supprime tout une fois la partie terminer
+            document.querySelector("#boutonPartieTerminee").addEventListener("click", async () => {
+                const requete = await fetch("/gestion/fin-partie", {
+                    method: "DELETE",
+                });
+                if (requete.ok) {
+                    const reponse = await requete.json();
+                    console.log(reponse);
+                } else {
+                    console.error("Une erreur est survenue lors de l'envoi de la requête");
+                }
+            });
+        } else {
+            if (reponse.msgErreur == "recharger") {
+                location.reload(true);
+            } else {
+                console.error(msgErreur);
+            }
+        }
+    } else {
+        console.error("Une erreur est survenue lors de la requête");
+    }
+});
