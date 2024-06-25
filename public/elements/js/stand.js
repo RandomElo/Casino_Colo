@@ -104,6 +104,7 @@ async function gestionScan(contenu) {
 scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan des QR codes
 
 // Obtenir la liste des caméras et les ajouter au select
+
 Instascan.Camera.getCameras()
     .then(function (cameras) {
         cameras.forEach((camera, i) => {
@@ -135,6 +136,7 @@ Instascan.Camera.getCameras()
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
+
 document.querySelector("#boutonResultat").addEventListener("click", async () => {
     const requete = await fetch("/gestion/recuperation-partie", {
         methode: "GET",
@@ -166,7 +168,7 @@ document.querySelector("#boutonResultat").addEventListener("click", async () => 
                         idUtilisateur: e.target.parentNode.dataset.id_utilisateur,
                         gainMultiplicateur: e.target.classList[2].split("X")[1],
                     };
-                    console.log(donnees)
+                    console.log(donnees);
                     const requete = await fetch("/gestion/ajout-gain", {
                         method: "POST",
                         headers: {
