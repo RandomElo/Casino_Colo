@@ -6,19 +6,13 @@ var cameraSelect = document.getElementById("cameraSelect");
 async function demarrerVideo(deviceId) {
     try {
         const flux = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: deviceId ? { exact: deviceId } : undefined }
+            video: { deviceId: deviceId ? { exact: deviceId } : undefined },
         });
         video.srcObject = flux;
         video.play();
     } catch (erreur) {
         console.error("Erreur lors de l'accès à la caméra :", erreur);
     }
-}
-
-// Fonction pour arrêter le scan
-function arreterScan() {
-    scanner.stop();
-    console.log("Scan arrêté");
 }
 
 // Détecter les QR codes en utilisant la bibliothèque Instascan
@@ -127,7 +121,11 @@ Instascan.Camera.getCameras()
         });
 
         // Démarrer avec la première caméra disponible
-        if (cameras.length > 0) {
+        if (cameras.length > 1) {
+            cameraSelect.value = cameras[1].id;
+            demarrerVideo(cameras[1].id);
+            scanner.start(cameras[1]);
+        } else if (cameras.length > 0) {
             cameraSelect.value = cameras[0].id;
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
