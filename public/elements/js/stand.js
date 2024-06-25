@@ -1,44 +1,32 @@
-async function requeteCamera(donnees) {
-    const informations = {
-        donnees: donnees,
-    };
-    const requete = await fetch("/gestion/camera-detail", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(informations),
-    });
-    if (requete.ok) {
-        alert("Requete ok");
-    } else {
-        alert("NOP");
-    }
-}
-
 // Sélection des éléments HTML
 var video = document.getElementById("videoElement");
+var cameraSelect = document.getElementById("cameraSelect");
 
 // Fonction pour démarrer la lecture vidéo depuis la caméra
-
-async function demarrerVideo() {
+async function demarrerVideo(deviceId) {
     try {
-        const flux = await navigator.mediaDevices.getUserMedia({ video: true });
+        const flux = await navigator.mediaDevices.getUserMedia({
+            video: { deviceId: deviceId ? { exact: deviceId } : undefined }
+        });
         video.srcObject = flux;
         video.play();
     } catch (erreur) {
         console.error("Erreur lors de l'accès à la caméra :", erreur);
     }
 }
-// Démarrer la vidéo lors du chargement de la page
-demarrerVideo();
+
+// Fonction pour arrêter le scan
+function arreterScan() {
+    scanner.stop();
+    console.log("Scan arrêté");
+}
 
 // Détecter les QR codes en utilisant la bibliothèque Instascan
 var scanner = new Instascan.Scanner({ video: video });
 var qrCodeDetected = false;
 
 async function gestionScan(contenu) {
-    // Empeche d'autre exécution
+    // Empêche d'autres exécutions
     if (qrCodeDetected) return;
     qrCodeDetected = true;
 
@@ -72,12 +60,12 @@ async function gestionScan(contenu) {
                     if (Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise) <= Number(reponse.solde)) {
                         document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise);
                     } else {
-                        alert("Le solde du compte est pas suffisant");
+                        alert("Le solde du compte n'est pas suffisant");
                     }
                 });
             });
             document.querySelector("#validerLaMise").addEventListener("click", async (e) => {
-                if (Number(document.querySelector("#inputMise").value <= Number(e.target.dataset.mise_max))) {
+                if (Number(document.querySelector("#inputMise").value) <= Number(e.target.dataset.mise_max)) {
                     const donnees = {
                         mise: document.querySelector("#inputMise").value,
                         idUtilisateur: e.target.dataset.id_utilisateur,
@@ -95,7 +83,7 @@ async function gestionScan(contenu) {
                             location.reload(true);
                         } else {
                             if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
-                                alert("Vous avez déjà défini la mise pour cette utilisateur");
+                                alert("Vous avez déjà défini la mise pour cet utilisateur");
                             } else {
                                 console.log(reponse);
                             }
@@ -104,7 +92,7 @@ async function gestionScan(contenu) {
                         console.error("Une erreur est survenue lors de l'envoi de la requête");
                     }
                 } else {
-                    alert("Le solde du compte est pas suffisant");
+                    alert("Le solde du compte n'est pas suffisant");
                 }
             });
         } else {
@@ -121,131 +109,30 @@ async function gestionScan(contenu) {
 
 scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan des QR codes
 
-// Démarrer la détection des QR codes
-
+// Obtenir la liste des caméras et les ajouter au select
 Instascan.Camera.getCameras()
     .then(function (cameras) {
-        requeteCamera(cameras);
+        cameras.forEach((camera, i) => {
+            var option = document.createElement("option");
+            option.value = camera.id;
+            option.text = camera.name || `Camera ${i + 1}`;
+            cameraSelect.appendChild(option);
+        });
+
+        // Ajouter un écouteur sur le changement de sélection de caméra
+        cameraSelect.addEventListener("change", () => {
+            var selectedCameraId = cameraSelect.value;
+            demarrerVideo(selectedCameraId);
+            scanner.start(selectedCameraId);
+        });
+
+        // Démarrer avec la première caméra disponible
         if (cameras.length > 0) {
-            if (cameras.length == 2) {
-                scanner.start(cameras[1]);
-            } else if (cameras.length == 4) {
-                scanner.start(cameras[2]);
-            } else {
-                alert("Nombre de caméra : " + cameras.length)
-            }
-        } else {
-            console.error("Aucune caméra trouvée.");
+            cameraSelect.value = cameras[0].id;
+            demarrerVideo(cameras[0].id);
+            scanner.start(cameras[0]);
         }
     })
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
-// Ecoute du bouton fin de partie
-document.querySelector("#boutonResultat").addEventListener("click", async () => {
-    const requete = await fetch("/gestion/recuperation-partie", {
-        methode: "GET",
-    });
-    if (requete.ok) {
-        const reponse = await requete.json();
-        console.clear();
-        if (reponse.recuperer) {
-            const donnees = reponse.donnees;
-            let divResultat = "";
-            for (let i = 0; i < donnees.length; i++) {
-                let element = donnees[i];
-                divResultat += /*html*/ `<div id="divUtilisateur${element.id_utilisateur}" class="divUtilisateurPartie">
-                    <p><span class="gras">Nom : </span>${element.nom_utilisateur}</p>
-                    <div class="divMutltiplicateurGagner" data-id_utilisateur=${element.id_utilisateur} >
-                        <a class="bouton boutonMultiplicateur miseX2">x 2</a>
-                        <a class="bouton boutonMultiplicateur miseX5">x 5</a>
-                        <a class="bouton boutonMultiplicateur miseX10">x 10</a>
-                    </div>
-                    <a class="bouton boutonPartiePerdu" data-id_utilisateur=${element.id_utilisateur}>Perdu</a>
-                </div>`;
-            }
-            document.querySelector("#divResultat").innerHTML = divResultat + /*html*/ `<a id="boutonPartieTerminee" class="bouton">Partie terminée</a>`;
-            // Bouton qui permet de multiplier la mise
-            document.querySelectorAll(".boutonMultiplicateur").forEach((bouton) => {
-                bouton.addEventListener("click", async (e) => {
-                    //const gainMutiplicateur = Number(e.target.classList[1].split("X")[1]) * Number(e.target.parentNode.dataset.solde);
-                    const donnees = {
-                        idUtilisateur: e.target.parentNode.dataset.id_utilisateur,
-                        gainMultiplicateur: e.target.classList[1].split("X")[1],
-                    };
-                    const requete = await fetch("/gestion/ajout-gain", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(donnees),
-                    });
-                    if (requete.ok) {
-                        const reponse = await requete.json();
-                        if (reponse.ajout) {
-                            document.querySelector(`#divUtilisateur${e.target.parentNode.dataset.id_utilisateur}`).style.display = "none";
-                        } else {
-                            if (reponse.msgErreur == "Utilisateur Inexistant") {
-                                alert("L'utilisateur n'existe pas");
-                            } else {
-                                console.error(reponse.msgErreur);
-                            }
-                        }
-                    } else {
-                        console.error("Une erreur est survenue lors de la requête");
-                    }
-                });
-            });
-            // Bouton si jamais la mise est perdu
-            document.querySelectorAll(".boutonPartiePerdu").forEach((bouton) => {
-                bouton.addEventListener("click", async (e) => {
-                    const donnee = {
-                        idUtilisateur: e.target.dataset.id_utilisateur,
-                    };
-                    const requete = await fetch("/gestion/gain-perdu", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(donnee),
-                    });
-                    if (requete.ok) {
-                        const reponse = await requete.json();
-                        if (reponse.maj) {
-                            document.querySelector(`#divUtilisateur${e.target.dataset.id_utilisateur}`).style.display = "none";
-                        } else {
-                            if (reponse.msgErreur == "Utilisateur Inexistant") {
-                                alert("L'utilisateur n'existe pas");
-                            } else {
-                                console.log(reponse.msgErreur);
-                            }
-                        }
-                        console.log(reponse);
-                    } else {
-                        console.error("Une erreur est survenue lors de l'envoie de la requête");
-                    }
-                });
-            });
-            // Bouton qui supprime tout une fois la partie terminer
-            document.querySelector("#boutonPartieTerminee").addEventListener("click", async () => {
-                const requete = await fetch("/gestion/fin-partie", {
-                    method: "DELETE",
-                });
-                if (requete.ok) {
-                    const reponse = await requete.json();
-                    console.log(reponse);
-                } else {
-                    console.error("Une erreur est survenue lors de l'envoi de la requête");
-                }
-            });
-        } else {
-            if (reponse.msgErreur == "recharger") {
-                location.reload(true);
-            } else {
-                console.error(msgErreur);
-            }
-        }
-    } else {
-        console.error("Une erreur est survenue lors de la requête");
-    }
-});

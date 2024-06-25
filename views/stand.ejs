@@ -1,9 +1,22 @@
 <%- include('./parties/tete.ejs') %>
     <h1 class="titrePage">Stand</h1>
-    <div id="divResultat">
+
+    <video id="videoElement" width="600" height="400"></video>
+    <select id="cameraSelect"></select>
+    <div id="divResultat"></div>
+
+    <!--<video id="videoElement" width="600" height="400"></video>
+    <select id="cameraSelect"></select>
+    <div id="boutonsScan">
+        <button id="startScanButton">Start Scan</button>
+        <button id="stopScanButton">Stop Scan</button>
+    </div>
+    <div id="divResultat"></div>-->
+
+    <!-- <div id="divResultat">
         <video id="videoElement" class="d-flex mx-auto" autoplay></video>
         <a id="boutonResultat" class="bouton">Résultats</a>
-    </div>
+    </div> -->
 
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <%- include('./parties/pied.ejs') %>

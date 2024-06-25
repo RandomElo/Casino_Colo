@@ -1,4 +1,4 @@
-#videoElement {
+/* #videoElement {
     width: 300px;
     margin-bottom: 15px;
 }
@@ -53,4 +53,21 @@
 }
 #boutonPartieTerminee {
     background-color: #db5375;
+}
+ */
+#cameraSelect {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+#boutonsScan {
+    display: flex;
+    justify-content: center;
+}
+#videoElement {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
 }
