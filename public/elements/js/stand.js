@@ -127,9 +127,9 @@ Instascan.Camera.getCameras()
     .then(function (cameras) {
         requeteCamera(cameras);
         if (cameras.length > 0) {
-            if (cameras.length == 1) {
+            if (cameras.length == 2) {
                 scanner.start(cameras[1]);
-            } else if (cameras.length == 3) {
+            } else if (cameras.length == 4) {
                 scanner.start(cameras[2]);
             } else {
                 alert("Nombre de caméra : " + cameras.length)
