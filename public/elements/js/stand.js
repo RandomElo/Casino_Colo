@@ -125,9 +125,15 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 
 Instascan.Camera.getCameras()
     .then(function (cameras) {
-        requeteCamera(cameras)
+        requeteCamera(cameras);
         if (cameras.length > 0) {
-            scanner.start(cameras[2]);
+            if (cameras.length == 1) {
+                scanner.start(cameras[1]);
+            } else if (cameras.length == 3) {
+                scanner.start(cameras[2]);
+            } else {
+                alert("Nombre de caméra : " + cameras.length)
+            }
         } else {
             console.error("Aucune caméra trouvée.");
         }
