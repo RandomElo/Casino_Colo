@@ -1,3 +1,21 @@
+async function requeteCamera(donnees) {
+    const informations = {
+        donnees: donnees,
+    };
+    const requete = await fetch("/gestion/camera-detail", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(informations),
+    });
+    if (requete.ok) {
+        alert("Requete ok");
+    } else {
+        alert("NOP");
+    }
+}
+
 // Sélection des éléments HTML
 var video = document.getElementById("videoElement");
 
@@ -10,6 +28,7 @@ async function demarrerVideo() {
         video.play();
     } catch (erreur) {
         console.error("Erreur lors de l'accès à la caméra :", erreur);
+        requeteCamera("31 Erreur lors de l'accès à la caméra :" + erreur);
     }
 }
 // Démarrer la vidéo lors du chargement de la page
@@ -74,7 +93,7 @@ async function gestionScan(contenu) {
                     if (requete.ok) {
                         const reponse = await requete.json();
                         if (reponse.mise) {
-                            location.reload(true)
+                            location.reload(true);
                         } else {
                             if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
                                 alert("Vous avez déjà défini la mise pour cette utilisateur");
@@ -108,13 +127,18 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 Instascan.Camera.getCameras()
     .then(function (cameras) {
         if (cameras.length > 0) {
+            console.log(cameras)
+            requeteCamera(cameras)
+            requeteCamera("Longeur cameras : "+cameras.length)
             scanner.start(cameras[0]);
         } else {
             console.error("Aucune caméra trouvée.");
+            requeteCamera("0 caméra")
         }
     })
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
+        requeteCamera("Erreur acces caméra l 138")
     });
 // Ecoute du bouton fin de partie
 document.querySelector("#boutonResultat").addEventListener("click", async () => {
@@ -222,5 +246,6 @@ document.querySelector("#boutonResultat").addEventListener("click", async () => 
         }
     } else {
         console.error("Une erreur est survenue lors de la requête");
+        requeteCamera("Erreur fin code")
     }
 });

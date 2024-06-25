@@ -49,6 +49,7 @@ export const modifierSolde = (req, res) => {
         });
 };
 export const connexionGestionnaire = (req, res) => {
+    console.log("JE recoit la  requete");
     req.Gestionnaire.findOne({
         where: { prenom_gestionnaire: req.body.nom },
     })
@@ -59,7 +60,7 @@ export const connexionGestionnaire = (req, res) => {
                         maxAge: 100 * 60 * 60 * 60 * 24,
                         httpOnly: true,
                         sameSite: "strict",
-                        secure: true,
+                        secure: process.env.ENV_NODE === "production",
                     });
                     res.json({ connexion: true });
                 } else {
@@ -87,7 +88,7 @@ export const creationPartie = (req, res) => {
                         maxAge: 100 * 60 * 60 * 60 * 24,
                         httpOnly: true,
                         sameSite: "strict",
-                        secure: true,
+                        secure: process.env.ENV_NODE === "production",
                     });
                     res.json({ cree: true, partie });
                 })
@@ -212,4 +213,8 @@ export const finPartie = (req, res) => {
             console.error(erreur);
             res.json({ supprimer: false, msgErreur: erreur });
         });
+};
+export const cameraInforamtion = (req, res) => {
+    console.log(req.body.donnees);
+    res.json({ traiter: "ok" });
 };

@@ -59,7 +59,7 @@ export const connexionAdministrateur = (req, res) => {
                 maxAge: 100 * 60 * 60 * 60 * 24,
                 httpOnly: true,
                 sameSite: "strict",
-                secure: true,
+                secure: process.env.ENV_NODE === "production",
             });
             res.json({cree:true})
         } else {
