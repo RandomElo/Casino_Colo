@@ -127,7 +127,7 @@ Instascan.Camera.getCameras()
     .then(function (cameras) {
         requeteCamera(cameras)
         if (cameras.length > 0) {
-            scanner.start(cameras[3]);
+            scanner.start(cameras[2]);
         } else {
             console.error("Aucune caméra trouvée.");
         }
