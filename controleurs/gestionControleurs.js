@@ -59,7 +59,7 @@ export const connexionGestionnaire = (req, res) => {
                         maxAge: 100 * 60 * 60 * 60 * 24,
                         httpOnly: true,
                         sameSite: "strict",
-                        // secure:true
+                        secure: true,
                     });
                     res.json({ connexion: true });
                 } else {
@@ -87,7 +87,7 @@ export const creationPartie = (req, res) => {
                         maxAge: 100 * 60 * 60 * 60 * 24,
                         httpOnly: true,
                         sameSite: "strict",
-                        // secure:true
+                        secure: true,
                     });
                     res.json({ cree: true, partie });
                 })
@@ -137,7 +137,6 @@ export const recuperationPartie = async (req, res) => {
         const utilisateurPartie = await req.UtilisateurPartie.findAll({ where: { id_partie: req.cookies.partie } });
         let donnees = {};
         for (let i = 0; i < utilisateurPartie.length; i++) {
-            // let element = utilisateurPartie[i];
             const element = await req.Utilisateur.findOne({ where: { id_utilisateur: utilisateurPartie[i].id_utilisateur } });
             donnees[i] = {
                 id_utilisateur: utilisateurPartie[i].id_utilisateur,
