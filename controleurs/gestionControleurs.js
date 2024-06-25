@@ -215,9 +215,10 @@ export const finPartie = (req, res) => {
         });
 };
 export const cameraInforamtion = (req, res) => {
-    console.log(req.body.donnees);
+    console.log("-------------------------------------");
     for (let i = 0; i < req.body.donnees.length; i++) {
         console.log(req.body.donnees[i].name);
     }
+    console.log("-------------------------------------");
     res.json({ traiter: "ok" });
 };
