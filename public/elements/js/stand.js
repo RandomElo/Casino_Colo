@@ -122,33 +122,28 @@ async function gestionScan(contenu) {
 scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan des QR codes
 
 // Obtenir la liste des caméras et les ajouter au select
+
 Instascan.Camera.getCameras()
-    .then(function (cameras) {
+    .then(async function (cameras) {
+        cameras.forEach((camera, i) => {
+            var option = document.createElement("option");
+            option.value = camera.id;
+            option.text = camera.name || `Camera ${i + 1}`;
+            cameraSelect.appendChild(option);
+        });
+
+        // Ajouter un écouteur sur le changement de sélection de caméra
+        cameraSelect.addEventListener("change", () => {
+            var selectedCameraId = cameraSelect.value;
+            demarrerVideo(selectedCameraId);
+            scanner.start(selectedCameraId);
+        });
+
+        // Démarrer avec la première caméra disponible
         if (cameras.length > 0) {
-            cameras.forEach((camera, i) => {
-                var option = document.createElement("option");
-                option.value = camera.id;
-                option.text = camera.name || `Caméra ${i + 1}`;
-                cameraSelect.appendChild(option);
-            });
-
-            // Sélectionner la deuxième caméra si elle existe
-            var selectedCameraIndex = cameras.length > 1 ? 1 : 0;
-            var selectedCamera = cameras[selectedCameraIndex];
-            cameraSelect.value = selectedCamera.id;
-
-            // Démarrer la vidéo et le scanner avec la caméra sélectionnée
-            demarrerVideo(selectedCamera.id);
-            scanner.start(selectedCamera);
-
-            // Ajouter un écouteur sur le changement de sélection de caméra
-            cameraSelect.addEventListener("change", () => {
-                var selectedCameraId = cameraSelect.value;
-                demarrerVideo(selectedCameraId);
-                scanner.start(cameras.find((camera) => camera.id === selectedCameraId));
-            });
-        } else {
-            console.error("Aucune caméra trouvée");
+            cameraSelect.value = cameras[0].id;
+            demarrerVideo(cameras[0].id);
+            scanner.start(cameras[0]);
         }
     })
     .catch(function (erreur) {
