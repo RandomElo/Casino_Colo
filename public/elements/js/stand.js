@@ -125,27 +125,31 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 
 Instascan.Camera.getCameras()
     .then(async function (cameras) {
-        cameras.forEach((camera, i) => {
-            var option = document.createElement("option");
-            option.value = camera.id;
-            option.text = camera.name || `Caméra ${i + 1}`;
-            cameraSelect.appendChild(option);
-        });
 
-        // Ajouter un écouteur sur le changement de sélection de caméra
-        cameraSelect.addEventListener("change", () => {
-            var selectedCameraId = cameraSelect.value;
-            demarrerVideo(selectedCameraId);
-            scanner.start(selectedCameraId);
-        });
+        demarrerVideo(cameras[1].id);
+        scanner.start(cameras[1]);
 
-        // Démarrer avec la première caméra disponible
-        if (cameras.length > 0) {
-            cameraSelect.value = cameras[1].id;
-            alert(cameras[1].id);
-            demarrerVideo(cameras[1].id);
-            scanner.start(cameras[1]);
-        }
+        // cameras.forEach((camera, i) => {
+        //     var option = document.createElement("option");
+        //     option.value = camera.id;
+        //     option.text = camera.name || `Caméra ${i + 1}`;
+        //     cameraSelect.appendChild(option);
+        // });
+
+        // // Ajouter un écouteur sur le changement de sélection de caméra
+        // cameraSelect.addEventListener("change", () => {
+        //     var selectedCameraId = cameraSelect.value;
+        //     demarrerVideo(selectedCameraId);
+        //     scanner.start(selectedCameraId);
+        // });
+
+        // // Démarrer avec la première caméra disponible
+        // if (cameras.length > 0) {
+        //     cameraSelect.value = cameras[1].id;
+        //     alert(cameras[1].id);
+        //     demarrerVideo(cameras[1].id);
+        //     scanner.start(cameras[1]);
+        // }
     })
     .catch(function (erreur) {
         console.error("Erreur lors de l'accès aux caméras :", erreur);
