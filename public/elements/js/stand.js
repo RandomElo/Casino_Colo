@@ -1,3 +1,21 @@
+async function requeteCamera(donnees) {
+    const informations = {
+        donnees: donnees,
+    };
+    const requete = await fetch("/gestion/camera-detail", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(informations),
+    });
+    if (requete.ok) {
+        alert("Requete ok");
+    } else {
+        alert("NOP");
+    }
+}
+
 // Sélection des éléments HTML
 var video = document.getElementById("videoElement");
 var cameraSelect = document.getElementById("cameraSelect");
@@ -123,6 +141,8 @@ Instascan.Camera.getCameras()
 
         // Démarrer avec la première caméra disponible
         if (cameras.length > 1) {
+            requeteCamera(cameras);
+            requeteCamera("J'affiche la seconde caméra");
             cameraSelect.value = cameras[1].id;
             demarrerVideo(cameras[1].id);
             scanner.start(cameras[1]);
