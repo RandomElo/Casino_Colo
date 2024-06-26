@@ -140,16 +140,16 @@ Instascan.Camera.getCameras()
         });
 
         // Démarrer avec la première caméra disponible
-        if (cameras.length > 1) {
-            requeteCamera(cameras);
-            requeteCamera("J'affiche la seconde caméra");
-            cameraSelect.value = cameras[1].id;
-            demarrerVideo(cameras[1].id);
-            scanner.start(cameras[1]);
-        } else if (cameras.length > 0) {
+        if (cameras.length == 1) {
             cameraSelect.value = cameras[0].id;
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
+        } else if (cameras.length == 2) {
+            requeteCamera("Je suis dans la deuxieme catégorie de longueur");
+            requeteCamera(cameras);
+            requeteCamera(cameras[1]);
+        } else {
+            requeteCamera("Je suis pas dans un catégorie de longeur");
         }
     })
     .catch(function (erreur) {
