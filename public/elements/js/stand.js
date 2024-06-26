@@ -125,6 +125,7 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 
 Instascan.Camera.getCameras()
     .then(function (cameras) {
+        alert(cameras)
         alert("Nbr de caméras : " + cameras.length);
         if (cameras.length > 0) {
             let selectedCamera = cameras[0];
