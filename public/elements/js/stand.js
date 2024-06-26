@@ -125,9 +125,17 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 
 Instascan.Camera.getCameras()
     .then(async function (cameras) {
-
-        demarrerVideo(cameras[1].id);
-        scanner.start(cameras[1]);
+        if (cameras.length > 1) {
+            try {
+                demarrerVideo(cameras[1].id);
+                scanner.start(cameras[1]);
+            } catch (erreur) {
+                alert(erreur);
+            }
+        } else {
+            demarrerVideo(cameras[0].id);
+            scanner.start(cameras[0]);
+        }
 
         // cameras.forEach((camera, i) => {
         //     var option = document.createElement("option");
@@ -152,6 +160,7 @@ Instascan.Camera.getCameras()
         // }
     })
     .catch(function (erreur) {
+        alert(erreur);
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
 
