@@ -128,7 +128,7 @@ Instascan.Camera.getCameras()
         cameras.forEach((camera, i) => {
             var option = document.createElement("option");
             option.value = camera.id;
-            option.text = camera.name || `Camera ${i + 1}`;
+            option.text = camera.name || `Caméra ${i + 1}`;
             cameraSelect.appendChild(option);
         });
 
@@ -142,6 +142,7 @@ Instascan.Camera.getCameras()
         // Démarrer avec la première caméra disponible
         if (cameras.length > 0) {
             cameraSelect.value = cameras[1].id;
+            alert(cameras[1].id);
             demarrerVideo(cameras[1].id);
             scanner.start(cameras[1]);
         }
