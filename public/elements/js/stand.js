@@ -128,7 +128,7 @@ Instascan.Camera.getCameras()
         cameras.forEach((camera, i) => {
             var option = document.createElement("option");
             option.value = camera.id;
-            option.text = camera.name || `Camera ${i + 1}`;
+            option.text = camera.name || `Caméra ${i + 1}`;
             cameraSelect.appendChild(option);
         });
 
@@ -148,9 +148,9 @@ Instascan.Camera.getCameras()
             requeteCamera("Je suis dans la deuxieme catégorie de longueur");
             requeteCamera(cameras);
             requeteCamera(cameras[1]);
-            cameraSelect.value = cameras[0].id;
-            demarrerVideo(cameras[0].id);
-            scanner.start(cameras[0]);
+            cameraSelect.value = cameras[1].id;
+            demarrerVideo(cameras[1].id);
+            scanner.start(cameras[1]);
         } else {
             requeteCamera("Je suis pas dans un catégorie de longeur");
         }
