@@ -122,7 +122,11 @@ Instascan.Camera.getCameras()
         });
 
         // Démarrer avec la première caméra disponible
-        if (cameras.length > 0) {
+        if (cameras.length > 1) {
+            cameraSelect.value = cameras[1].id;
+            demarrerVideo(cameras[1].id);
+            scanner.start(cameras[1]);
+        } else if (cameras.length > 0) {
             cameraSelect.value = cameras[0].id;
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
