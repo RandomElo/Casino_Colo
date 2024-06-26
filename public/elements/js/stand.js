@@ -124,43 +124,57 @@ scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan d
 // Obtenir la liste des caméras et les ajouter au select
 
 Instascan.Camera.getCameras()
-    .then(async function (cameras) {
-        if (cameras.length > 1) {
+    .then(function (cameras) {
+        alert("Nbr de caméras : " + cameras.length);
+        if (cameras.length > 0) {
+            let selectedCamera = cameras[0];
+            if (cameras.length > 1) {
+                alert("séléction de la caméra 2");
+                selectedCamera = cameras[1];
+            }
+
             try {
-                demarrerVideo(cameras[1].id);
-                scanner.start(cameras[1]);
+                demarrerVideo(selectedCamera.id);
+                scanner.start(selectedCamera);
             } catch (erreur) {
-                alert(erreur);
+                alert("Erreur lors du démarrage de la caméra : " + erreur.message);
+                console.error("Erreur lors du démarrage de la caméra :", erreur);
             }
         } else {
+            alert("Aucune caméra disponible");
+            console.error("Aucune caméra disponible");
+        }
+
+        // Décommenter le code suivant si vous souhaitez ajouter des options de sélection de caméra
+        /*
+        cameras.forEach((camera, i) => {
+            var option = document.createElement("option");
+            option.value = camera.id;
+            option.text = camera.name || `Caméra ${i + 1}`;
+            cameraSelect.appendChild(option);
+        });
+
+        cameraSelect.addEventListener("change", () => {
+            var selectedCameraId = cameraSelect.value;
+            try {
+                demarrerVideo(selectedCameraId);
+                scanner.start(cameras.find(cam => cam.id === selectedCameraId));
+            } catch (erreur) {
+                alert("Erreur lors du changement de caméra : " + erreur.message);
+                console.error("Erreur lors du changement de caméra :", erreur);
+            }
+        });
+
+        if (cameras.length > 0) {
+            cameraSelect.value = cameras[0].id;
+            alert(cameras[0].id);
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
         }
-
-        // cameras.forEach((camera, i) => {
-        //     var option = document.createElement("option");
-        //     option.value = camera.id;
-        //     option.text = camera.name || `Caméra ${i + 1}`;
-        //     cameraSelect.appendChild(option);
-        // });
-
-        // // Ajouter un écouteur sur le changement de sélection de caméra
-        // cameraSelect.addEventListener("change", () => {
-        //     var selectedCameraId = cameraSelect.value;
-        //     demarrerVideo(selectedCameraId);
-        //     scanner.start(selectedCameraId);
-        // });
-
-        // // Démarrer avec la première caméra disponible
-        // if (cameras.length > 0) {
-        //     cameraSelect.value = cameras[1].id;
-        //     alert(cameras[1].id);
-        //     demarrerVideo(cameras[1].id);
-        //     scanner.start(cameras[1]);
-        // }
+        */
     })
     .catch(function (erreur) {
-        alert(erreur);
+        alert("Erreur lors de l'accès aux caméras : " + erreur.message);
         console.error("Erreur lors de l'accès aux caméras :", erreur);
     });
 
