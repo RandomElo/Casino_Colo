@@ -118,16 +118,11 @@ Instascan.Camera.getCameras()
         cameraSelect.addEventListener("change", () => {
             var selectedCameraId = cameraSelect.value;
             demarrerVideo(selectedCameraId);
-            scanner.start(cameras.find((camera) => camera.id === selectedCameraId));
+            scanner.start(selectedCameraId);
         });
 
-        // Utiliser la deuxième caméra si deux caméras sont disponibles
-        if (cameras.length > 1) {
-            cameraSelect.value = cameras[1].id;
-            demarrerVideo(cameras[1].id);
-            scanner.start(cameras[1]);
-        } else if (cameras.length > 0) {
-            // Sinon, utiliser la première caméra disponible
+        // Démarrer avec la première caméra disponible
+        if (cameras.length > 0) {
             cameraSelect.value = cameras[0].id;
             demarrerVideo(cameras[0].id);
             scanner.start(cameras[0]);
