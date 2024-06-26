@@ -148,6 +148,9 @@ Instascan.Camera.getCameras()
             requeteCamera("Je suis dans la deuxieme catégorie de longueur");
             requeteCamera(cameras);
             requeteCamera(cameras[1]);
+            cameraSelect.value = cameras[0].id;
+            demarrerVideo(cameras[0].id);
+            scanner.start(cameras[0]);
         } else {
             requeteCamera("Je suis pas dans un catégorie de longeur");
         }
