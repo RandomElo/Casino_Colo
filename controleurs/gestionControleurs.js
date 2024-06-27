@@ -221,9 +221,9 @@ export const cameraInforamtion = (req, res) => {
 };
 
 import Jimp from "jimp";
-import QrCode from 'qrcode-reader';
+import QrCode from "qrcode-reader";
 
-export const qrCode = async (req, res) => {
+export const decodageQrCode = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No image uploaded" });
     }
@@ -236,7 +236,7 @@ export const qrCode = async (req, res) => {
             if (err) {
                 return res.status(400).json({ error: "QR code decoding failed" });
             }
-            res.json({ type: "QR Code", data: value.result });
+            res.json({ type: "QR Code", valeur: value.result });
         };
 
         qr.decode(image.bitmap);

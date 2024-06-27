@@ -1,183 +1,126 @@
-async function requeteCamera(donnees) {
-    const informations = {
-        donnees: donnees,
-    };
-    const requete = await fetch("/gestion/camera-detail", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(informations),
+// AJOUT DU NOUVEAU CODE
+
+// Affichage de la caméra sur l'écran
+navigator.mediaDevices
+    .getUserMedia({ video: { facingMode: "environment" } }) // Demande d'accès à la caméra arrière du téléphone
+    .then(function (stream) {
+        var videoElement = document.querySelector("#videoElement");
+        videoElement.srcObject = stream; // Affichage du flux vidéo dans l'élément vidéo
+    })
+    .catch(function (error) {
+        console.error("Erreur lors de l'accès à la caméra: ", error); // Affichage de l'erreur si l'accès à la caméra échoue
     });
-    if (requete.ok) {
-        alert("Requete ok");
-    } else {
-        alert("NOP");
-    }
-}
 
-// Sélection des éléments HTML
-var video = document.getElementById("videoElement");
-var cameraSelect = document.getElementById("cameraSelect");
+// Surveillance du click sur le bouton pour l'envoi
+document.querySelector("#boutonCapture").addEventListener("click", function () {
+    var videoElement = document.querySelector("#videoElement");
+    var canvas = document.createElement("canvas"); // Création d'un élément canvas pour capturer l'image de la vidéo
+    canvas.width = videoElement.videoWidth; // Définition de la largeur du canvas égale à celle de la vidéo
+    canvas.height = videoElement.videoHeight; // Définition de la hauteur du canvas égale à celle de la vidéo
+    var context = canvas.getContext("2d");
+    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height); // Dessin de l'image vidéo actuelle sur le canvas
 
-// Fonction pour démarrer la lecture vidéo depuis la caméra
-async function demarrerVideo(deviceId) {
-    try {
-        const flux = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: deviceId ? { exact: deviceId } : undefined },
-        });
-        video.srcObject = flux;
-        video.play();
-    } catch (erreur) {
-        console.error("Erreur lors de l'accès à la caméra :", erreur);
-    }
-}
+    // Conversion du canvas en Blob (image)
+    canvas.toBlob(function (blob) {
+        var formData = new FormData();
+        formData.append("image", blob, "capture.png"); // Ajout du Blob au FormData pour l'envoi
 
-// Détecter les QR codes en utilisant la bibliothèque Instascan
-var scanner = new Instascan.Scanner({ video: video });
-var qrCodeDetected = false;
-
-async function gestionScan(contenu) {
-    // Empêche d'autres exécutions
-    if (qrCodeDetected) return;
-    qrCodeDetected = true;
-
-    console.log("QR Code détecté : " + contenu);
-    const donnee = {
-        idUtilisateur: contenu,
-    };
-    const requete = await fetch("/gestion/recuperer-solde", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(donnee),
-    });
-    if (requete.ok) {
-        const reponse = await requete.json();
-        if (reponse.trouve) {
-            document.querySelector("#divResultat").innerHTML = /*html*/ `<div>
-                <p><span class="gras">Nom : </span>${reponse.nom}</p>
-                <div id="divInputMise"><p class="gras"><span>Mise : </p><input type="number" value="${reponse.mise}" max="${reponse.solde}" id="inputMise"></div>
-                <div id="divBoutonMise">
-                    <a id="ajoutMise1" class="bouton boutonMise" data-mise=1>+ 1</a>
-                    <a id="ajoutMise10" class="bouton boutonMise" data-mise=10>+ 10</a>
-                    <a id="ajoutMise100" class="bouton boutonMise" data-mise=100>+ 100</a>
-                    <a id="ajoutMise1000" class="bouton boutonMise" data-mise=1000>+ 1 000</a>
-                </div>
-                <a id="validerLaMise" class="bouton" data-mise_max=${reponse.solde} data-id_utilisateur=${reponse.id}>Valider</a>
-            </div>`;
-            document.querySelectorAll(".boutonMise").forEach((bouton) => {
-                bouton.addEventListener("click", (e) => {
-                    if (Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise) <= Number(reponse.solde)) {
-                        document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise);
-                    } else {
-                        alert("Le solde du compte n'est pas suffisant");
-                    }
-                });
-            });
-            document.querySelector("#validerLaMise").addEventListener("click", async (e) => {
-                if (Number(document.querySelector("#inputMise").value) <= Number(e.target.dataset.mise_max)) {
-                    const donnees = {
-                        mise: document.querySelector("#inputMise").value,
-                        idUtilisateur: e.target.dataset.id_utilisateur,
+        // Envoi de l'image au serveur pour le décodage du QR code
+        fetch("/gestion/decodage-qrcode", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json()) // Conversion de la réponse en JSON
+            .then((donnees) => {
+                console.log(donnees);
+                if (!donnees.error) {
+                    console.log("QR Code :", donnees.valeur); // Affichage des données du QR code dans la console
+                    const donnee = {
+                        idUtilisateur: donnees.valeur,
                     };
-                    const requete = await fetch("/gestion/mise", {
+                    fetch("/gestion/recuperer-solde", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify(donnees),
-                    });
-                    if (requete.ok) {
-                        const reponse = await requete.json();
-                        if (reponse.mise) {
-                            location.reload(true);
-                        } else {
-                            if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
-                                alert("Vous avez déjà défini la mise pour cet utilisateur");
+                        body: JSON.stringify(donnee),
+                    })
+                        .then((reponse) => reponse.json())
+                        .then((reponse) => {
+                            if (reponse.trouve) {
+                                document.querySelector("#divResultat").innerHTML = /*html*/ `<div>
+                                    <p><span class="gras">Nom : </span>${reponse.nom}</p>
+                                    <div id="divInputMise"><p class="gras"><span>Mise : </p><input type="number" value="${reponse.mise}" max="${reponse.solde}" id="inputMise"></div>
+                                    <div id="divBoutonMise">
+                                        <a id="ajoutMise1" class="bouton boutonMise" data-mise=1>+ 1</a>
+                                        <a id="ajoutMise10" class="bouton boutonMise" data-mise=10>+ 10</a>
+                                        <a id="ajoutMise100" class="bouton boutonMise" data-mise=100>+ 100</a>
+                                        <a id="ajoutMise1000" class="bouton boutonMise" data-mise=1000>+ 1 000</a>
+                                    </div>
+                                    <a id="validerLaMise" class="bouton" data-mise_max=${reponse.solde} data-id_utilisateur=${reponse.id}>Valider</a>
+                                </div>`;
+                                document.querySelectorAll(".boutonMise").forEach((bouton) => {
+                                    bouton.addEventListener("click", (e) => {
+                                        if (Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise) <= Number(reponse.solde)) {
+                                            document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise);
+                                        } else {
+                                            alert("Le solde du compte n'est pas suffisant");
+                                        }
+                                    });
+                                });
+                                document.querySelector("#validerLaMise").addEventListener("click", async (e) => {
+                                    if (Number(document.querySelector("#inputMise").value) <= Number(e.target.dataset.mise_max)) {
+                                        const donnees = {
+                                            mise: document.querySelector("#inputMise").value,
+                                            idUtilisateur: e.target.dataset.id_utilisateur,
+                                        };
+                                        fetch("/gestion/mise", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                            },
+                                            body: JSON.stringify(donnees),
+                                        })
+                                            .then((reponse) => {
+                                                if (reponse.mise) {
+                                                    location.reload(true);
+                                                } else {
+                                                    if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
+                                                        alert("Vous avez déjà défini la mise pour cet utilisateur");
+                                                    } else {
+                                                        console.log(reponse);
+                                                    }
+                                                }
+                                            })
+                                            .catch((erreur) => {
+                                                console.error("Une erreur est survenue lors de l'envoi de la requête");
+                                                console.error(erreur);
+                                            });
+                                    } else {
+                                        alert("Le solde du compte n'est pas suffisant");
+                                    }
+                                });
                             } else {
-                                console.log(reponse);
+                                if (reponse.msgErreur == "inexistant") {
+                                    alert("Utilisateur inexistant");
+                                } else {
+                                    console.error(reponse.msgErreur);
+                                }
                             }
-                        }
-                    } else {
-                        console.error("Une erreur est survenue lors de l'envoi de la requête");
-                    }
+                        })
+                        .catch((erreur) => {
+                            console.error(erreur);
+                        });
                 } else {
-                    alert("Le solde du compte n'est pas suffisant");
+                    console.error("Erreur lors du décodage du QR-Code");
+                    alert("Erreur lors du décodage du QR-Code");
                 }
+            })
+            .catch((erreur) => {
+                console.error("Erreur lors de l'envoi de l'image:", erreur); // Affichage de l'erreur si l'envoi échoue
             });
-        } else {
-            if (reponse.msgErreur == "inexistant") {
-                alert("Utilisateur inexistant");
-            } else {
-                console.error(reponse.msgErreur);
-            }
-        }
-    } else {
-        console.error("Une erreur est survenue");
-    }
-}
-
-scanner.addListener("scan", gestionScan); // Ajouter un écouteur pour le scan des QR codes
-
-// Obtenir la liste des caméras et les ajouter au select
-
-Instascan.Camera.getCameras()
-    .then(function (cameras) {
-        alert(cameras)
-        alert("Nbr de caméras : " + cameras.length);
-        if (cameras.length > 0) {
-            let selectedCamera = cameras[0];
-            if (cameras.length > 1) {
-                alert("séléction de la caméra 2");
-                selectedCamera = cameras[1];
-            }
-
-            try {
-                demarrerVideo(selectedCamera.id);
-                scanner.start(selectedCamera);
-            } catch (erreur) {
-                alert("Erreur lors du démarrage de la caméra : " + erreur.message);
-                console.error("Erreur lors du démarrage de la caméra :", erreur);
-            }
-        } else {
-            alert("Aucune caméra disponible");
-            console.error("Aucune caméra disponible");
-        }
-
-        // Décommenter le code suivant si vous souhaitez ajouter des options de sélection de caméra
-        /*
-        cameras.forEach((camera, i) => {
-            var option = document.createElement("option");
-            option.value = camera.id;
-            option.text = camera.name || `Caméra ${i + 1}`;
-            cameraSelect.appendChild(option);
-        });
-
-        cameraSelect.addEventListener("change", () => {
-            var selectedCameraId = cameraSelect.value;
-            try {
-                demarrerVideo(selectedCameraId);
-                scanner.start(cameras.find(cam => cam.id === selectedCameraId));
-            } catch (erreur) {
-                alert("Erreur lors du changement de caméra : " + erreur.message);
-                console.error("Erreur lors du changement de caméra :", erreur);
-            }
-        });
-
-        if (cameras.length > 0) {
-            cameraSelect.value = cameras[0].id;
-            alert(cameras[0].id);
-            demarrerVideo(cameras[0].id);
-            scanner.start(cameras[0]);
-        }
-        */
-    })
-    .catch(function (erreur) {
-        alert("Erreur lors de l'accès aux caméras : " + erreur.message);
-        console.error("Erreur lors de l'accès aux caméras :", erreur);
-    });
+    }, "image/png"); // Spécification du format de l'image (PNG)
+});
 
 document.querySelector("#boutonResultat").addEventListener("click", async () => {
     const requete = await fetch("/gestion/recuperation-partie", {

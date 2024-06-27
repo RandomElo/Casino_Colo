@@ -72,5 +72,11 @@
     display: flex;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+}
+#boutonCapture {
+    background-color: #ffa744;
+    display: block;
+    width: 171px;
+    margin: 0 auto 15px auto;
 }

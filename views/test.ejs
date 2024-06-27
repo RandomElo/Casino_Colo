@@ -11,41 +11,50 @@
         <button id="captureButton">Capturer et envoyer l'image</button>
 
         <script>
+            // Affichage de la caméra sur l'écran
             navigator.mediaDevices
-                .getUserMedia({ video: { facingMode: "environment" } })
+                .getUserMedia({ video: { facingMode: "environment" } }) // Demande d'accès à la caméra arrière du téléphone
                 .then(function (stream) {
-                    var videoElement = document.getElementById("videoElement");
-                    videoElement.srcObject = stream;
+                    var videoElement = document.querySelector("#videoElement");
+                    videoElement.srcObject = stream; // Affichage du flux vidéo dans l'élément vidéo
                 })
                 .catch(function (error) {
-                    console.error("Erreur lors de l'accès à la caméra: ", error);
+                    console.error("Erreur lors de l'accès à la caméra: ", error); // Affichage de l'erreur si l'accès à la caméra échoue
                 });
 
-            document.getElementById("captureButton").addEventListener("click", function () {
-                var videoElement = document.getElementById("videoElement");
-                var canvas = document.createElement("canvas");
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
+            // Surveillance du click sur le bouton pour l'envoi
+            document.querySelector("#captureButton").addEventListener("click", function () {
+                var videoElement = document.querySelector("#videoElement");
+                var canvas = document.createElement("canvas"); // Création d'un élément canvas pour capturer l'image de la vidéo
+                canvas.width = videoElement.videoWidth; // Définition de la largeur du canvas égale à celle de la vidéo
+                canvas.height = videoElement.videoHeight; // Définition de la hauteur du canvas égale à celle de la vidéo
                 var context = canvas.getContext("2d");
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height); // Dessin de l'image vidéo actuelle sur le canvas
 
+                // Conversion du canvas en Blob (image)
                 canvas.toBlob(function (blob) {
                     var formData = new FormData();
-                    formData.append("image", blob, "capture.png"); // Ensure 'image' matches the expected field name
+                    formData.append("image", blob, "capture.png"); // Ajout du Blob au FormData pour l'envoi
 
-                    fetch("/gestion/test-upload", {
+                    // Envoi de l'image au serveur pour le décodage du QR code
+                    fetch("/gestion/decodage-qrcode", {
                         method: "POST",
                         body: formData,
                     })
-                        .then((response) => response.json()) // Ensure the response is JSON
+                        .then((response) => response.json()) // Conversion de la réponse en JSON
                         .then((data) => {
-                            console.log("QR Code data:", data.data);
-                            alert("QR Code : "+data.data)
+                            console.log(data);
+                            if (!data.error) {
+                                console.log("QR Code data:", data.data); // Affichage des données du QR code dans la console
+                            } else {
+                                console.error("Erreur lors du décodage du QR-Code");
+                                alert("Erreur lors du décodage du QR-Code");
+                            }
                         })
                         .catch((error) => {
-                            console.error("Erreur lors de l'envoi de l'image:", error);
+                            console.error("Erreur lors de l'envoi de l'image:", error); // Affichage de l'erreur si l'envoi échoue
                         });
-                }, "image/png");
+                }, "image/png"); // Spécification du format de l'image (PNG)
             });
         </script>
     </body>
