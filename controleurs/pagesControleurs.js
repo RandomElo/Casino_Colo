@@ -1,3 +1,6 @@
+export const tableauScore = (req, res) => {
+    res.render("tableauScore.ejs", { titre: "Tableau des scores", css: "tableauScore", js: "tableauScore" });
+};
 export const standPage = (req, res) => {
     if (req.cookies.gestionnaire) {
         if (req.cookies.partie) {
@@ -8,7 +11,4 @@ export const standPage = (req, res) => {
     } else {
         res.render("connexion.ejs", { titre: "Connexion Gestionnaire", css: "connexion", js: "connexionGestionnaire" });
     }
-};
-export const testPage = (req, res) => {
-    res.render("test.ejs");
 };

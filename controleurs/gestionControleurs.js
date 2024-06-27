@@ -1,3 +1,6 @@
+import Jimp from "jimp";
+import QrCode from "qrcode-reader";
+
 export const recupererSolde = (req, res) => {
     req.Utilisateur.findOne({
         where: { id_utilisateur: req.body.idUtilisateur },
@@ -214,14 +217,6 @@ export const finPartie = (req, res) => {
             res.json({ supprimer: false, msgErreur: erreur });
         });
 };
-export const cameraInforamtion = (req, res) => {
-    console.log(req.body.donnees);
-    console.log("---------------------------");
-    res.json({ traiter: "ok" });
-};
-
-import Jimp from "jimp";
-import QrCode from "qrcode-reader";
 
 export const decodageQrCode = async (req, res) => {
     if (!req.file) {
@@ -243,4 +238,16 @@ export const decodageQrCode = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: "Failed to process image" });
     }
+};
+export const listeUtilisateurs = async (req, res) => {
+    req.Utilisateur.findAll()
+        .then((resultat) => {
+            console.log(resultat);
+            res.json(resultat);
+        })
+        .catch((erreur) => {
+            console.error(erreur);
+            res.status(500).json(erreur);
+        });
+    const listeutilisateur = await req.Utilisateur.findAll();
 };

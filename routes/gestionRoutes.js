@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { modifierSolde, recupererSolde, connexionGestionnaire, creationPartie, miseUtilisateur, recuperationPartie, ajoutGain, gainPerdu, finPartie, cameraInforamtion, decodageQrCode } from "../controleurs/gestionControleurs.js";
+import { modifierSolde, recupererSolde, connexionGestionnaire, creationPartie, miseUtilisateur, recuperationPartie, ajoutGain, gainPerdu, finPartie, decodageQrCode, listeUtilisateurs } from "../controleurs/gestionControleurs.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -15,6 +15,6 @@ routeurGestion.get("/recuperation-partie", recuperationPartie);
 routeurGestion.post("/ajout-gain", ajoutGain);
 routeurGestion.post("/gain-perdu", gainPerdu);
 routeurGestion.delete("/fin-partie", finPartie);
-routeurGestion.post("/camera-detail", cameraInforamtion);
 routeurGestion.post("/decodage-qrcode", upload.single("image"), decodageQrCode);
+routeurGestion.get("/liste-utilisateur", listeUtilisateurs);
 export default routeurGestion;
