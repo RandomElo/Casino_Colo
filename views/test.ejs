@@ -40,6 +40,7 @@
                         .then((response) => response.json()) // Ensure the response is JSON
                         .then((data) => {
                             console.log("QR Code data:", data);
+                            alert("Qr codd data : "+data)
                         })
                         .catch((error) => {
                             console.error("Erreur lors de l'envoi de l'image:", error);
