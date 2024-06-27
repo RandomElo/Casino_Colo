@@ -9,3 +9,6 @@ export const standPage = (req, res) => {
         res.render("connexion.ejs", { titre: "Connexion Gestionnaire", css: "connexion", js: "connexionGestionnaire" });
     }
 };
+export const testPage = (req, res) => {
+    res.render("test.ejs");
+};

@@ -216,6 +216,31 @@ export const finPartie = (req, res) => {
 };
 export const cameraInforamtion = (req, res) => {
     console.log(req.body.donnees);
-    console.log("---------------------------")
+    console.log("---------------------------");
     res.json({ traiter: "ok" });
+};
+
+import Jimp from "jimp";
+import QrCode from 'qrcode-reader';
+
+export const qrCode = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "No image uploaded" });
+    }
+
+    try {
+        const image = await Jimp.read(req.file.buffer);
+        const qr = new QrCode();
+
+        qr.callback = (err, value) => {
+            if (err) {
+                return res.status(400).json({ error: "QR code decoding failed" });
+            }
+            res.json({ type: "QR Code", data: value.result });
+        };
+
+        qr.decode(image.bitmap);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to process image" });
+    }
 };

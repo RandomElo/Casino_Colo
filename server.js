@@ -2,6 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import cors from "cors";
+
+// Zone TEST
+import multer from "multer";
+import QrCode from "qrcode-reader";
+
+// Fin zone TEST
+
 //import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 
@@ -9,7 +16,7 @@ import { accesibiliteBDD } from "./middlewares/accesibiliteBDD.js";
 import bdd from "./bdd/bdd.js";
 
 import routeurGestion from "./routes/gestionRoutes.js";
-import routeurAdministrateur from "./routes/administrateurRoutes.js"
+import routeurAdministrateur from "./routes/administrateurRoutes.js";
 import routeurPages from "./routes/pagesRoutes.js";
 
 dotenv.config();

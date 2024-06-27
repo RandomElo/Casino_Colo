@@ -1,6 +1,7 @@
 import express from "express";
-import { standPage } from "../controleurs/pagesControleurs.js";
+import { standPage, testPage } from "../controleurs/pagesControleurs.js";
 const routeurPages = express.Router();
 routeurPages.get("/stand", standPage);
+routeurPages.get("/test", testPage);
 
 export default routeurPages;
