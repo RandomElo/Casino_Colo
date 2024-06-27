@@ -39,8 +39,8 @@
                     })
                         .then((response) => response.json()) // Ensure the response is JSON
                         .then((data) => {
-                            console.log("QR Code data:", data);
-                            alert("Qr codd data : "+data)
+                            console.log("QR Code data:", data.data);
+                            alert("QR Code : "+data.data)
                         })
                         .catch((error) => {
                             console.error("Erreur lors de l'envoi de l'image:", error);
