@@ -1,0 +1,12 @@
+#divResultat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.divUtilisateur {
+    margin-bottom: 20px;
+}
+.modifierLeSolde {
+    background-color: #729ea1;
+}

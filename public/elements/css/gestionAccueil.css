@@ -1,0 +1,15 @@
+#boutonPageStand,
+#boutonPageUtilisateur {
+    background-color: #729ea1;
+}
+#boutonPageStand {
+    width: 106px;
+}
+#boutonPageUtilisateur {
+    width: 207px;
+}
+#divBoutonRedirection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

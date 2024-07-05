@@ -2,6 +2,7 @@
     width: 90%;
     max-width: 500px;
     height: 50%;
+    margin-bottom: 4px;
 }
 #divResultat {
     text-align: center;
@@ -10,7 +11,6 @@
     display: flex;
     justify-content: center;
     margin-top: 10px;
-    margin-bottom: 20px;
 }
 .boutonMise {
     background-color: #ffa744;
@@ -21,6 +21,8 @@
     margin-right: 10px;
 }
 #validerLaMise {
+    width: 76px;
+    /* margin-right: 10px; */
     background-color: #729ea1;
 }
 #divInputMise {
@@ -56,27 +58,29 @@
 }
 #boutonPartieTerminee {
     background-color: #db5375;
+    width: 145px;
 }
 
-#cameraSelect {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
-}
 #boutonsScan {
     display: flex;
     justify-content: center;
-}
-#videoElement {
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 15px;
 }
 #boutonCapture {
     background-color: #ffa744;
     display: block;
     width: 171px;
     margin: 0 auto 15px auto;
+}
+#boutonRetourQRCode {
+    width: 145px;
+    background-color: #8ea08e;
+}
+#divBoutonActionPageMise {
+    display: flex;
+}
+#divBoutonActionPageMise,
+#divBoutonPartie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

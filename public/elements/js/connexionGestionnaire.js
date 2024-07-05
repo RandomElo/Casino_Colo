@@ -14,7 +14,7 @@ document.querySelector("#form").addEventListener("submit", async (e) => {
     if (requete.ok) {
         const reponse = await requete.json();
         if (reponse.connexion) {
-            location.reload(true)
+            location.reload(true);
         } else {
             console.error("Les données sont fausse");
         }

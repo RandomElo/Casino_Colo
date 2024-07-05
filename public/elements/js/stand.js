@@ -1,125 +1,136 @@
-// AJOUT DU NOUVEAU CODE
+import QrScanner from "/public/js/modules/scanQRCode/qr-scanner.min.js";
 
-// Affichage de la caméra sur l'écran
-navigator.mediaDevices
-    .getUserMedia({ video: { facingMode: "environment" } }) // Demande d'accès à la caméra arrière du téléphone
-    .then(function (stream) {
-        var videoElement = document.querySelector("#videoElement");
-        videoElement.srcObject = stream; // Affichage du flux vidéo dans l'élément vidéo
-    })
-    .catch(function (error) {
-        console.error("Erreur lors de l'accès à la caméra: ", error); // Affichage de l'erreur si l'accès à la caméra échoue
-    });
+// Function to initialize and start the scanner
+async function startScanner() {
+    // Select the video element
+    const videoElem = document.getElementById("videoElement");
 
-// Surveillance du click sur le bouton pour l'envoi
-document.querySelector("#boutonCapture").addEventListener("click", function () {
-    var videoElement = document.querySelector("#videoElement");
-    var canvas = document.createElement("canvas"); // Création d'un élément canvas pour capturer l'image de la vidéo
-    canvas.width = videoElement.videoWidth; // Définition de la largeur du canvas égale à celle de la vidéo
-    canvas.height = videoElement.videoHeight; // Définition de la hauteur du canvas égale à celle de la vidéo
-    var context = canvas.getContext("2d");
-    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height); // Dessin de l'image vidéo actuelle sur le canvas
+    try {
+        // Check for camera permission and initialize video stream
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        videoElem.srcObject = stream;
+        let qrCodeDetecter = false;
 
-    // Conversion du canvas en Blob (image)
-    canvas.toBlob(function (blob) {
-        var formData = new FormData();
-        formData.append("image", blob, "capture.png"); // Ajout du Blob au FormData pour l'envoi
+        // Create an instance of QRScanner with the video element
+        const qrScanner = new QrScanner(
+            videoElem,
+            (result) => {
+                if (qrCodeDetecter) return;
+                qrCodeDetecter = true;
 
-        // Envoi de l'image au serveur pour le décodage du QR code
-        fetch("/gestion/decodage-qrcode", {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => response.json()) // Conversion de la réponse en JSON
-            .then((donnees) => {
-                console.log(donnees);
-                if (!donnees.error) {
-                    console.log("QR Code :", donnees.valeur); // Affichage des données du QR code dans la console
-                    const donnee = {
-                        idUtilisateur: donnees.valeur,
-                    };
-                    fetch("/gestion/recuperer-solde", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(donnee),
-                    })
-                        .then((reponse) => reponse.json())
-                        .then((reponse) => {
-                            if (reponse.trouve) {
-                                document.querySelector("#divResultat").innerHTML = /*html*/ `<div>
-                                    <p><span class="gras">Nom : </span>${reponse.nom}</p>
-                                    <div id="divInputMise"><p class="gras"><span>Mise : </p><input type="number" value="${reponse.mise}" max="${reponse.solde}" id="inputMise"></div>
-                                    <div id="divBoutonMise">
-                                        <a id="ajoutMise1" class="bouton boutonMise" data-mise=1>+ 1</a>
-                                        <a id="ajoutMise10" class="bouton boutonMise" data-mise=10>+ 10</a>
-                                        <a id="ajoutMise100" class="bouton boutonMise" data-mise=100>+ 100</a>
-                                        <a id="ajoutMise1000" class="bouton boutonMise" data-mise=1000>+ 1 000</a>
-                                    </div>
-                                    <a id="validerLaMise" class="bouton" data-mise_max=${reponse.solde} data-id_utilisateur=${reponse.id}>Valider</a>
-                                </div>`;
-                                document.querySelectorAll(".boutonMise").forEach((bouton) => {
-                                    bouton.addEventListener("click", (e) => {
-                                        if (Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise) <= Number(reponse.solde)) {
-                                            document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise);
-                                        } else {
-                                            alert("Le solde du compte n'est pas suffisant");
-                                        }
-                                    });
-                                });
-                                document.querySelector("#validerLaMise").addEventListener("click", async (e) => {
-                                    if (Number(document.querySelector("#inputMise").value) <= Number(e.target.dataset.mise_max)) {
-                                        const donnees = {
-                                            mise: document.querySelector("#inputMise").value,
-                                            idUtilisateur: e.target.dataset.id_utilisateur,
-                                        };
-                                        fetch("/gestion/mise", {
-                                            method: "POST",
-                                            headers: {
-                                                "Content-Type": "application/json",
-                                            },
-                                            body: JSON.stringify(donnees),
-                                        })
-                                            .then((reponse) => {
-                                                if (reponse.mise) {
-                                                    location.reload(true);
-                                                } else {
-                                                    if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
-                                                        alert("Vous avez déjà défini la mise pour cet utilisateur");
-                                                    } else {
-                                                        console.log(reponse);
-                                                    }
-                                                }
-                                            })
-                                            .catch((erreur) => {
-                                                console.error("Une erreur est survenue lors de l'envoi de la requête");
-                                                console.error(erreur);
-                                            });
+                const donnee = result.data; // Access the scanned data from the detailed scan result object
+                console.log("QR Code détecté:", donnee);
+
+                const objetDonnee = {
+                    idUtilisateur: donnee,
+                };
+                fetch("/gestion/recuperer-solde", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(objetDonnee),
+                })
+                    .then((reponse) => reponse.json())
+                    .then((reponse) => {
+                        if (reponse.trouve) {
+                            document.querySelector("#divResultat").innerHTML = /*html*/ `<div>
+                            <p><span class="gras">Nom : </span>${reponse.nom}</p>
+                            <div id="divInputMise"><p class="gras"><span>Mise : </p><input type="number" value="${reponse.mise}" max="${reponse.solde}" id="inputMise"></div>
+                            <div id="divBoutonMise">
+                                <a id="ajoutMise1" class="bouton boutonMise" data-mise=1>+ 1</a>
+                                <a id="ajoutMise10" class="bouton boutonMise" data-mise=10>+ 10</a>
+                                <a id="ajoutMise100" class="bouton boutonMise" data-mise=100>+ 100</a>
+                                <a id="ajoutMise1000" class="bouton boutonMise" data-mise=1000>+ 1 000</a>
+                            </div>
+                            <div id="divBoutonActionPageMise">
+                                <a id="validerLaMise" class="bouton" data-mise_max=${reponse.solde} data-id_utilisateur=${reponse.id}>Valider</a>
+                                <a id="boutonRetourQRCode" class="bouton">Retour scanneur</a>
+                            </div>
+                        </div>`;
+                            document.querySelectorAll(".boutonMise").forEach((bouton) => {
+                                bouton.addEventListener("click", (e) => {
+                                    if (Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise) <= Number(reponse.solde)) {
+                                        document.querySelector("#inputMise").value = Number(document.querySelector("#inputMise").value) + Number(e.target.dataset.mise);
                                     } else {
                                         alert("Le solde du compte n'est pas suffisant");
                                     }
                                 });
-                            } else {
-                                if (reponse.msgErreur == "inexistant") {
-                                    alert("Utilisateur inexistant");
+                            });
+                            document.querySelector("#validerLaMise").addEventListener("click", async (e) => {
+                                if (Number(document.querySelector("#inputMise").value) <= Number(e.target.dataset.mise_max)) {
+                                    const donnees = {
+                                        mise: document.querySelector("#inputMise").value,
+                                        idUtilisateur: e.target.dataset.id_utilisateur,
+                                    };
+                                    fetch("/gestion/mise", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify(donnees),
+                                    })
+                                        .then((reponse) => reponse.json())
+                                        .then((reponse) => {
+                                            if (reponse.mise) {
+                                                // location.reload(true);
+                                                afficherScanneur();
+                                            } else {
+                                                if (reponse.msgErreur.name == "SequelizeUniqueConstraintError") {
+                                                    alert("Vous avez déjà défini la mise pour cet utilisateur");
+                                                } else {
+                                                    console.log(reponse);
+                                                }
+                                            }
+                                        })
+                                        .catch((erreur) => {
+                                            console.error("Une erreur est survenue lors de l'envoi de la requête");
+                                            console.error(erreur);
+                                        });
                                 } else {
-                                    console.error(reponse.msgErreur);
+                                    alert("Le solde du compte n'est pas suffisant");
                                 }
+                            });
+                            document.querySelector("#boutonRetourQRCode").addEventListener("click", () => {
+                                // location.reload(true);
+                                afficherScanneur();
+                            });
+                        } else {
+                            if (reponse.msgErreur == "inexistant") {
+                                alert("Utilisateur inexistant");
+                            } else {
+                                console.error(reponse.msgErreur);
                             }
-                        })
-                        .catch((erreur) => {
-                            console.error(erreur);
-                        });
-                } else {
-                    console.error("Erreur lors du décodage du QR-Code");
-                    alert("Erreur lors du décodage du QR-Code");
-                }
-            })
-            .catch((erreur) => {
-                console.error("Erreur lors de l'envoi de l'image:", erreur); // Affichage de l'erreur si l'envoi échoue
-            });
-    }, "image/png"); // Spécification du format de l'image (PNG)
+                        }
+                    })
+                    .catch((erreur) => {
+                        console.error(erreur);
+                    });
+            },
+            {
+                returnDetailedScanResult: true,
+            }
+        );
+
+        // Start the scanner
+        qrScanner.start();
+    } catch (error) {
+        alert("Erreur lors de l'accès à la caméra");
+        console.error("Erreur lors de l'accès à la caméra:", error);
+    }
+}
+
+function afficherScanneur() {
+    document.querySelector("#divResultat").innerHTML = /*html*/ `
+        <video id="videoElement"></video>
+        <a id="boutonResultat" class="bouton">Résultats</a>
+    `;
+    startScanner();
+}
+
+// Start the scanner when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    startScanner();
 });
 
 document.querySelector("#boutonResultat").addEventListener("click", async () => {
@@ -144,7 +155,14 @@ document.querySelector("#boutonResultat").addEventListener("click", async () => 
                         <a class="bouton boutonPartiePerdu" data-id_utilisateur=${element.id_utilisateur}>Perdu</a>
                     </div>`;
             }
-            document.querySelector("#divResultat").innerHTML = divResultat + /*html*/ `<a id="boutonPartieTerminee" class="bouton">Partie terminée</a>`;
+            document.querySelector("#divResultat").innerHTML =
+                divResultat +
+                /*html*/ `
+            <div id="divBoutonPartie">
+                <a id="boutonPartieTerminee" class="bouton">Partie terminée</a>
+                <a id="boutonRetourQRCode" class="bouton">Retour scanneur</a>
+            </div>
+            `;
             // Bouton qui permet de multiplier la mise
             document.querySelectorAll(".boutonMultiplicateur").forEach((bouton) => {
                 bouton.addEventListener("click", async (e) => {
@@ -219,9 +237,15 @@ document.querySelector("#boutonResultat").addEventListener("click", async () => 
                     console.error("Une erreur est survenue lors de l'envoi de la requête");
                 }
             });
+            // Bouton pour retourner au scanneur
+            document.querySelector("#boutonRetourQRCode").addEventListener("click", () => {
+                // location.reload(true);
+                afficherScanneur();
+            });
         } else {
             if (reponse.msgErreur == "recharger") {
-                location.reload(true);
+                // location.reload(true);
+                afficherScanneur();
             } else {
                 console.error(msgErreur);
             }

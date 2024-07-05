@@ -1,11 +1,10 @@
 <%- include('./parties/tete.ejs') %>
     <h1 class="titrePage">Stand</h1>
     <div id="divResultat">
-        <video id="videoElement" autoplay playsinline width="640" height="480"></video>
-        <a id="boutonCapture" class="bouton">Scanner le QR-Code</a>
-    
+        <video id="videoElement"></video>
         <a id="boutonResultat" class="bouton">Résultats</a>
     </div>
 
+    <script type="module" src="/public/js/stand.js"></script>
 
 <%- include('./parties/pied.ejs') %>

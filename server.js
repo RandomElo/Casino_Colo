@@ -4,6 +4,7 @@ import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+import { verificateurCookie } from "./middlewares/verificateurCookies.js";
 import { accesibiliteBDD } from "./middlewares/accesibiliteBDD.js";
 import bdd from "./bdd/bdd.js";
 
@@ -32,6 +33,8 @@ app.use("/public", express.static(path.join(process.cwd(), "public/elements")));
 app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(accesibiliteBDD(bdd));
+
+app.use(verificateurCookie);
 
 app.use("/", routeurPages);
 app.use("/gestion", routeurGestion);

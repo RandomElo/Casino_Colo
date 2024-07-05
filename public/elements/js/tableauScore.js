@@ -1,5 +1,5 @@
 function generationTableau() {
-    console.log("Actualisation")
+    console.log("Actualisation");
     fetch("/gestion/liste-utilisateur", {
         method: "GET",
     })
@@ -23,7 +23,7 @@ function generationTableau() {
                 const element = resultat[i];
                 tableau += /*html*/ `
                 <tr>
-                    <th scope="row">${i == 0 ? "🥇" : i == 1 ? "🥈" : i == 2 ? "🥉" : "&nbsp" + i}</th>
+                    <th scope="row">${i == 0 ? "🥇" : i == 1 ? "🥈" : i == 2 ? "🥉" : "&nbsp" + (i + 1)}</th>
                     <td>${element.identite_utilisateur}</td>
                     <td>${element.solde_utilisateur}</td>
                 </tr>
@@ -34,4 +34,4 @@ function generationTableau() {
         });
 }
 generationTableau();
-setInterval(generationTableau, 15000)
+setInterval(generationTableau, 15000);

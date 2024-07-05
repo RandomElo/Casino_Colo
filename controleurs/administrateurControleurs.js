@@ -1,10 +1,6 @@
+import { promises as fs } from "fs";
 export const administration = (req, res) => {
-    // Si pas de cookie alors renvoyer la page de connexion
-    if (req.cookies.administrateur != process.env.CHAINE_ADMINISTRATEUR) {
-        res.render("connexion.ejs", { titre: "Connexion administrateur", css: "connexion", js: "connexionAdministrateur" });
-    } else {
-        res.render("administrateur.ejs", { titre: "Administrateur", css: "administrateur", js: "administrateur" });
-    }
+    res.render("administrateur.ejs", { titre: "Administrateur", css: "administrateur", js: "administrateur" });
 };
 export const ajoutUtilisateur = (req, res) => {
     req.Utilisateur.create({
@@ -61,11 +57,24 @@ export const connexionAdministrateur = (req, res) => {
                 sameSite: "strict",
                 secure: process.env.ENV_NODE === "production",
             });
-            res.json({cree:true})
+            res.json({ cree: true });
         } else {
             res.json({ cree: false });
         }
     } else {
         res.json({ cree: false });
+    }
+};
+export const suppressionBDD = async (req, res) => {
+    const cheminBDD = "bdd.sqlite";
+    try {
+        fs.unlink("bdd.sqlite");
+        res.json({ suppression: true });
+    } catch (erreur) {
+        console.error(erreur);
+        res.clearCookie("administrateur");
+        res.clearCookie("gestionnaire");
+        res.clearCookie("partie");
+        res.json({ suppression: false, erreurMsg: erreur });
     }
 };

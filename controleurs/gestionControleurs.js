@@ -1,6 +1,27 @@
 import Jimp from "jimp";
 import QrCode from "qrcode-reader";
 
+export const pageGestion = (req, res) => {
+    res.render("gestionAccueil.ejs", { titre: "Gestion Accueil", css: "gestionAccueil", js: "" });
+};
+export const pageGestionStand = (req, res) => {
+    // if (req.cookies.gestionnaire) {
+        if (req.cookies.partie || req.partie) {
+            res.render("stand.ejs", { titre: "Stand", css: "stand", js: "" });
+        } else {
+            res.render("creationPartie.ejs", { titre: "Création Partie", css: "creationPartie", js: "creationPartie" });
+        }
+    // } else {
+    //     res.render("connexion.ejs", { titre: "Connexion Gestionnaire", css: "connexion", js: "connexionGestionnaire" });
+    // }
+};
+export const pageGestionUtilisateur = (req, res) => {
+    // if (req.cookies.gestionnaire) {
+        res.render("gestionUtilisateur.ejs", { titre: "Gestion Utilisateur", css: "gestionUtilisateur", js: "gestionUtilisateur" });
+    // } else {
+    //     res.render("connexion.ejs", { titre: "Connexion Gestionnaire", css: "connexion", js: "connexionGestionnaire" });
+    // }
+};
 export const recupererSolde = (req, res) => {
     req.Utilisateur.findOne({
         where: { id_utilisateur: req.body.idUtilisateur },
@@ -38,7 +59,6 @@ export const recupererSolde = (req, res) => {
         });
 };
 export const modifierSolde = (req, res) => {
-    // const solde_utilisateur = req.body.solde_utilisateur;
     req.Utilisateur.update(
         { solde_utilisateur: req.body.solde_utilisateur },
         {
@@ -52,7 +72,6 @@ export const modifierSolde = (req, res) => {
         });
 };
 export const connexionGestionnaire = (req, res) => {
-    console.log("JE recoit la  requete");
     req.Gestionnaire.findOne({
         where: { prenom_gestionnaire: req.body.nom },
     })
@@ -137,7 +156,7 @@ export const miseUtilisateur = (req, res) => {
         });
 };
 export const recuperationPartie = async (req, res) => {
-    if (req.cookies.gestionnaire != null) {
+    // if (req.cookies.gestionnaire != null) {
         const utilisateurPartie = await req.UtilisateurPartie.findAll({ where: { id_partie: req.cookies.partie } });
         let donnees = {};
         for (let i = 0; i < utilisateurPartie.length; i++) {
@@ -150,9 +169,9 @@ export const recuperationPartie = async (req, res) => {
         }
         donnees.length = utilisateurPartie.length;
         res.json({ recuperer: true, donnees });
-    } else {
-        res.json({ recuperer: false, msgErreur: "recharger" });
-    }
+    // } else {
+    //     res.json({ recuperer: false, msgErreur: "recharger" });
+    // }
 };
 
 export const ajoutGain = async (req, res) => {
@@ -242,12 +261,10 @@ export const decodageQrCode = async (req, res) => {
 export const listeUtilisateurs = async (req, res) => {
     req.Utilisateur.findAll()
         .then((resultat) => {
-            console.log(resultat);
             res.json(resultat);
         })
         .catch((erreur) => {
             console.error(erreur);
             res.status(500).json(erreur);
         });
-    const listeutilisateur = await req.Utilisateur.findAll();
 };

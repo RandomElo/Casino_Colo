@@ -12,10 +12,8 @@ async function creationUtilisateur() {
         });
         if (requete.ok) {
             const reponse = await requete.json();
-            if (reponse.operation) {
-                console.log("L'enregistrement c'est bien effectuer");
-            } else {
-                console.log("Une erreur est survenue lors de l'enregistrement");
+            if (!reponse.operation) {
+                alert("Une erreur est survenue lors de l'enregistrement");
             }
         } else {
             console.log("Une erreur est survenue lors de l'envoi de la requête");
@@ -59,12 +57,10 @@ async function gestionUtilisateur() {
                     if (requete.ok) {
                         const reponse = await requete.json();
                         if (reponse.miseAJour) {
-                            console.log("La mise à jour à étais effectuer avec succés");
                             gestionUtilisateur();
                         } else {
                             console.error(reponse.msgErreur);
                         }
-                        console.log(reponse);
                     } else {
                         console.error("Une erreur est survenue lors de l'envoie de la requete");
                     }
@@ -86,7 +82,6 @@ async function gestionUtilisateur() {
                         if (requete.ok) {
                             const reponse = await requete.json();
                             if (reponse.suppression) {
-                                console.log("L'utilisteur à bien étais supprimer");
                                 gestionUtilisateur();
                             } else {
                                 console.error(reponse.msgErreur);
@@ -117,9 +112,8 @@ async function creationGestionnaire() {
         });
         if (requete.ok) {
             const reponse = await requete.json();
-            if (reponse.ajout) {
-                console.log("Le gestionnaire à étais ajouter");
-            } else {
+            if (!reponse.ajout) {
+                alert("Problème lors de la création du gestionnaire");
                 console.error(reponse.msgErreur);
             }
         } else {
@@ -164,9 +158,8 @@ async function gestionGestionnaire() {
                         if (requete.ok) {
                             const reponse = await requete.json();
                             console.log(reponse);
-                            if (reponse.suppression) {
-                                console.log("Le gestionnaire à bien étais supprrimer");
-                            } else {
+                            if (!reponse.suppression) {
+                                alert("Problème lors de la suppression de l'utilisateur");
                                 console.error(reponse.msgErreur);
                             }
                         } else {
@@ -180,7 +173,27 @@ async function gestionGestionnaire() {
         console.error("Une erreur est survenue lors de la requête ");
     }
 }
+function supprimerBDD() {
+    if (confirm("Es-tu sûr ?")) {
+        fetch("/administrateur/suppression-bdd", {
+            method: "DELETE",
+        })
+            .then((reponse) => reponse.json())
+            .then((reponse) => {
+                if (reponse.suppression) {
+                    alert("La BDD à bien été supprimer");
+                } else {
+                    alert("Une erreur est survenue lors de la suppression de la BDD");
+                    console.error(reponse.erreurMsg);
+                }
+            })
+            .catch((erreur) => {
+                console.error(erreur);
+            });
+    }
+}
 document.querySelector("#boutonCreationUtilisateur").addEventListener("click", creationUtilisateur);
 document.querySelector("#boutonGestionUtilisateur").addEventListener("click", gestionUtilisateur);
 document.querySelector("#boutonCreationGestionnaire").addEventListener("click", creationGestionnaire);
 document.querySelector("#boutonGestionGestionnaire").addEventListener("click", gestionGestionnaire);
+document.querySelector("#boutonSupprimerBDD").addEventListener("click", supprimerBDD);
